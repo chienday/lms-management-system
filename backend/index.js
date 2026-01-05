@@ -14,13 +14,19 @@ const app = express();
 app.use(express.json({ limit: "10mb" }));
 
 // --- CORS Configuration ---
-// Only allow your frontend’s Vercel domain
-const allowedOrigin = "https://school-management-system-hazel-eta.vercel.app";
+// Allow both production Vercel domain and localhost for development
+const allowedOrigins = [
+  "https://school-management-system-hazel-eta.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:3001"
+];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl) or from the specific allowed origin
-    if (!origin || origin === allowedOrigin) {
+    // Allow requests with no origin (mobile apps, curl, Postman) or from allowed origins
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       console.warn(`Blocked CORS for origin: ${origin}`);
@@ -41,10 +47,21 @@ app.use(cors(corsOptions));
 // --- End CORS Configuration ---
 
 // Connect to MongoDB
+if (!process.env.MONGO_URL) {
+  console.error("❌ ERROR: MONGO_URL is not defined in .env file!");
+  console.error("Please create a .env file in the backend folder with:");
+  console.error("MONGO_URL=mongodb://127.0.0.1:27017/school");
+  console.error("Or use MongoDB Atlas connection string");
+  process.exit(1);
+}
+
 mongoose
   .connect(process.env.MONGO_URL)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .then(() => console.log("✅ Connected to MongoDB successfully"))
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err.message);
+    console.error("Please check your MONGO_URL in .env file");
+  });
 
 // Root endpoint
 app.get("/", (req, res) => {

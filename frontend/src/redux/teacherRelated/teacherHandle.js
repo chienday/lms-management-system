@@ -8,7 +8,8 @@ import {
   doneSuccess,
 } from "./teacherSlice";
 
-//const REACT_APP_BASE_URL="http://localhost:5000"
+// Base URL for API - use environment variable or fallback to localhost for development
+const REACT_APP_BASE_URL ="http://localhost:5000";
 
 // Async action to fetch all teachers
 export const getAllTeachers = (id) => async (dispatch) => {
@@ -17,7 +18,7 @@ export const getAllTeachers = (id) => async (dispatch) => {
   // Try to make an asynchronous GET request to the specified URL
   try {
     const result = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}/Teachers/${id}`
+      `${REACT_APP_BASE_URL}/Teachers/${id}`
     );
     // Check if the response contains a message indicating an error
     if (result.data.message) {
@@ -36,7 +37,7 @@ export const getTeacherDetails = (id) => async (dispatch) => {
   // Try to make an asynchronous GET request to the specified URL
   try {
     const result = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}/Teacher/${id}`
+      `${REACT_APP_BASE_URL}/Teacher/${id}`
     );
 
     // Dispatch doneSuccess with the retrieved data
@@ -55,7 +56,7 @@ export const updateTeachSubject =
     // Try to make an asynchronous PUT request to the specified URL
     try {
       await axios.put(
-        `${process.env.REACT_APP_BASE_URL}/TeacherSubject`,
+        `${REACT_APP_BASE_URL}/TeacherSubject`,
         { teacherId, teachSubject },
         {
           headers: { "Content-Type": "application/json" }, // Set the content type to JSON

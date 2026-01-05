@@ -7,7 +7,9 @@ import {
   stuffDone,
 } from "./studentSlice";
 
-//const REACT_APP_BASE_URL="http://localhost:5000"
+// Base URL for API - use environment variable or fallback to localhost for development
+const REACT_APP_BASE_URL ="http://localhost:5000"
+ //process.env.REACT_APP_BASE_URL || "http://localhost:5000";
 
 // Async action to fetch all students
 export const getAllStudents = (id) => async (dispatch) => {
@@ -16,7 +18,7 @@ export const getAllStudents = (id) => async (dispatch) => {
   // Try to make an asynchronous GET request to the specified URL
   try {
     const result = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}/Students/${id}`
+      `${REACT_APP_BASE_URL}/Students/${id}`
     );
 
     // Check if the response contains a message indicating an error
@@ -37,7 +39,7 @@ export const updateStudentFields =
     // Try to make an asynchronous PUT request to the specified URL
     try {
       const result = await axios.put(
-        `${process.env.REACT_APP_BASE_URL}/${address}/${id}`,
+        `${REACT_APP_BASE_URL}/${address}/${id}`,
         fields,
         {
           headers: { "Content-Type": "application/json" }, // Set the content type to JSON
@@ -61,7 +63,7 @@ export const removeStuff = (id, address) => async (dispatch) => {
   // Try to make an asynchronous PUT request to the specified URL
   try {
     const result = await axios.put(
-      `${process.env.REACT_APP_BASE_URL}/${address}/${id}`
+      `${REACT_APP_BASE_URL}/${address}/${id}`
     );
     // Check if the response contains a message indicating an error
     if (result.data.message) {
