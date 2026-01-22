@@ -1,47 +1,4 @@
-<h1 align="center">
-    Edu-365
-</h1>
 
-<h3 align="center">
-Transform your school’s daily operations into a dynamic, growth‐focused environment.<br>
-Easily organize classes, enroll students and faculty, and monitor progress in real time.<br>
-Utilize continuous attendance tracking, performance assessments, and timely feedback to drive improvement.<br>
-Access detailed records, review marks, and foster open communication to empower every learner.
-</h3>
-
-<br>
-LIVE LINK: https://school-management-system-hazel-eta.vercel.app
-
-BACKEND: https://edu-365.vercel.app
-
-**VIDEO PRESENTATION:** https://drive.google.com/file/d/1eh5Lf0SXdkLZWKr_I-B0aeFZnnZoh4e7/view?usp=drive_link
-# sample login for testing 
-
-Name: Sample Admin
-
-Email: sampleadmin@gmail.com
-
-School: PLP SCHOOL
-
-password: 123
-
-# techer 
-
-email: teacher4@gmail.com
-
-password: 12345
-
-# student
-
-Student Roll No: 1
-
-student name: DANIEL MUSYOKI
-
-password: 12345
-
-**NOTICE:** MAY TAKE SOME TIME  WHEN YOU TRY TO REGISTER OR LOG IN 
-
-<br>
 
 ## About
 
