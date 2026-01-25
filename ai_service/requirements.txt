@@ -1,0 +1,4 @@
+# danh sách thư viện mà dịch vụ AI cần để chạy giống dependencies.
+
+fastapi
+uvicorn
