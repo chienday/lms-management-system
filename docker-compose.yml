@@ -1,0 +1,59 @@
+services:
+  mongodb:
+    image: mongo:6
+    container_name: lms-tlu-mongodb
+    restart: always
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - lms-tlu-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: lms-tlu-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - lms-tlu-network
+
+  frontend:
+    build: ./frontend
+    container_name: lms-tlu-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    networks:
+      - lms-tlu-network
+
+  ai-service:
+    build: ./ai_service
+    container_name: lms-tlu-ai-service
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - backend
+    networks:
+      - lms-tlu-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  lms-tlu-network:
+    driver: bridge
