@@ -53,7 +53,7 @@ const Homepage = () => {
         <Grid item xs={12} md={6}>
           {/* Styled paper for the content */}
           <StyledPaper elevation={3}>
-            <AnimatedTitle>Edu - 365</AnimatedTitle>
+            <AnimatedTitle>LMS-TLU</AnimatedTitle>
             <StyledText>
               Efficiently manage school administration, organize classes, and
               incorporate both students and faculty seamlessly. Monitor

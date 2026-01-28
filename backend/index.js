@@ -16,7 +16,6 @@ app.use(express.json({ limit: "10mb" }));
 // --- CORS Configuration ---
 // Allow both production Vercel domain and localhost for development
 const allowedOrigins = [
-  "https://school-management-system-hazel-eta.vercel.app",
   "http://localhost:3000",
   "http://localhost:3001",
   "http://127.0.0.1:3000",

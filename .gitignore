@@ -3,9 +3,7 @@
 __pycache__/
 venv/
 *.pyc
-
 # Node
 node_modules/
-
 # Env
 .env
