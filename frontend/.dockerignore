@@ -1,0 +1,34 @@
+# Node dependencies (không cần vì build trong container)
+node_modules
+
+# Build output (sẽ build lại trong Docker)
+build
+dist
+
+# Git
+.git
+.gitignore
+
+# Environment files (KHÔNG COPY VÀO IMAGE)
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Tests & coverage
+coverage
+.nyc_output
+
+# Docs & misc
+README.md
+screenshots
