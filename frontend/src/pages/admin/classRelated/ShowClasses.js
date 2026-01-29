@@ -1,201 +1,213 @@
 // Import necessary modules and components
 import { useEffect, useState } from 'react';
-import { IconButton, Box, Menu, MenuItem, ListItemIcon, Tooltip } from '@mui/material';
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { deleteUser } from '../../../redux/userRelated/userHandle';
-import { getAllSclasses } from '../../../redux/sclassRelated/sclassHandle';
-import { BlueButton, GreenButton, ButtonContainer } from '../../../components/buttonStyles';
-import TableTemplate from '../../../components/TableTemplate';
+import {
+  IconButton,
+  Box,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Tooltip,
+  Paper,
+} from '@mui/material';
 
+import DeleteIcon from "@mui/icons-material/Delete";
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import AddCardIcon from '@mui/icons-material/AddCard';
-// eslint-disable-next-line no-unused-vars
-import styled from 'styled-components';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import { deleteUser } from '../../../redux/userRelated/userHandle';
+import { getAllSclasses } from '../../../redux/sclassRelated/sclassHandle';
+
+import { BlueButton, GreenButton } from '../../../components/buttonStyles';
+import TableTemplate from '../../../components/TableTemplate';
 import SpeedDialTemplate from '../../../components/SpeedDialTemplate';
 import Popup from '../../../components/Popup';
 
-// Define the ShowClasses component
+// ================= COMPONENT =================
 const ShowClasses = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { sclassesList, loading, error, getresponse } = useSelector((state) => state.sclass);
-  const { currentUser } = useSelector(state => state.user)
+  const { sclassesList, loading, error, getresponse } = useSelector(
+    (state) => state.sclass
+  );
+  const { currentUser } = useSelector((state) => state.user);
 
-  const adminID = currentUser._id
+  const adminID = currentUser?._id;
 
-  // Fetch all classes on component mount
+  const [showPopup, setShowPopup] = useState(false);
+  const [message, setMessage] = useState("");
+
+  // ===== FETCH DATA =====
   useEffect(() => {
-    dispatch(getAllSclasses(adminID, "Sclass"));
+    if (adminID) {
+      dispatch(getAllSclasses(adminID, "Sclass"));
+    }
   }, [adminID, dispatch]);
 
   if (error) {
-    console.log(error)
+    console.error(error);
   }
 
-  const [showPopup, setShowPopup] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [message, setMessage] = useState("");
-
-  // Handle deletion of a class
+  // ===== DELETE HANDLER =====
   const deleteHandler = (deleteID, address) => {
-    console.log(deleteID);
-    console.log(address);
-    dispatch(deleteUser(deleteID, address))
-      .then(() => {
-        dispatch(getAllSclasses(adminID, "Sclass"));
-      })
-  }
-
-  // Define columns for the classes table
-  const sclassColumns = [
-    { id: 'name', label: 'Class Name', minWidth: 170 },
-  ]
-
-  // Map class data to table rows
-  const sclassRows = sclassesList && sclassesList.length > 0 && sclassesList.map((sclass) => {
-      return {
-      name: sclass.sclassName,
-      id: sclass._id,
-    };
-  })
-
-  const SclassButtonHaver = ({ row }) => {
-    const actions = [
-      { icon: <PostAddIcon />, name: 'Add Subjects', action: () => navigate("/Admin/addsubject/" + row.id) },
-      { icon: <PersonAddAlt1Icon />, name: 'Add Student', action: () => navigate("/Admin/class/addstudents/" + row.id) },
-    ];
-    // Render buttons for each row in the classes table
-    return (
-      <ButtonContainer>
-        <IconButton onClick={() => deleteHandler(row.id, "Sclass")} color="secondary">
-          <DeleteIcon color="error" />
-        </IconButton>
-        <BlueButton variant="contained"
-          onClick={() => navigate("/Admin/classes/class/" + row.id)}>
-          View
-        </BlueButton>
-        <ActionMenu actions={actions} />
-      </ButtonContainer>
-    );
+    dispatch(deleteUser(deleteID, address)).then(() => {
+      dispatch(getAllSclasses(adminID, "Sclass"));
+    });
   };
 
-  // Define the ActionMenu component for additional actions
+  // ===== TABLE COLUMNS =====
+  const sclassColumns = [
+    { id: 'name', label: 'Class Name', minWidth: 220 },
+   
+  ];
+
+  // ===== TABLE ROWS =====
+  const sclassRows =
+    Array.isArray(sclassesList) &&
+    sclassesList.map((sclass) => ({
+      name: sclass.sclassName,
+      id: sclass._id,
+    }));
+
+  // ===== ACTION MENU (PER ROW) =====
   const ActionMenu = ({ actions }) => {
     const [anchorEl, setAnchorEl] = useState(null);
-
     const open = Boolean(anchorEl);
 
-    const handleClick = (event) => {
-      // Handle click on the action menu button
-      setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
     return (
       <>
-        <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-          <Tooltip title="Add Students & Subjects">
-            <IconButton
-              onClick={handleClick}
-              size="small"
-              sx={{ ml: 2 }}
-              aria-controls={open ? 'account-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-            >
-              <h5>Add</h5>
-              <SpeedDialIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
+        <Tooltip title="Add Students & Subjects">
+          <IconButton
+            size="small"
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+            sx={{ ml: 1 }}
+          >
+            <SpeedDialIcon />
+          </IconButton>
+        </Tooltip>
+
         <Menu
           anchorEl={anchorEl}
-          id="account-menu"
           open={open}
-          onClose={handleClose}
-          onClick={handleClose}
+          onClose={() => setAnchorEl(null)}
+          onClick={() => setAnchorEl(null)}
           PaperProps={{
-            elevation: 0,
+            elevation: 3,
             sx: styles.styledPaper,
           }}
-          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
           anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         >
-          {actions.map((action) => (
-            <MenuItem onClick={action.action}>
-              <ListItemIcon fontSize="small">
-                {action.icon}
-              </ListItemIcon>
+          {actions.map((action, index) => (
+            <MenuItem key={index} onClick={action.action}>
+              <ListItemIcon>{action.icon}</ListItemIcon>
               {action.name}
             </MenuItem>
           ))}
         </Menu>
       </>
     );
-  }
+  };
 
-  // Define actions for the classes section speed dial
+  // ===== BUTTONS IN TABLE =====
+  const SclassButtonHaver = ({ row }) => {
+    const actions = [
+      {
+        icon: <PostAddIcon />,
+        name: 'Add Subjects',
+        action: () => navigate(`/Admin/addsubject/${row.id}`),
+      },
+      {
+        icon: <PersonAddAlt1Icon />,
+        name: 'Add Student',
+        action: () => navigate(`/Admin/class/addstudents/${row.id}`),
+      },
+    ];
+
+    return (
+      <>
+        <IconButton onClick={() => deleteHandler(row.id, "Sclass")}>
+          <DeleteIcon color="error" />
+        </IconButton>
+
+        <BlueButton
+          variant="contained"
+          onClick={() => navigate(`/Admin/classes/class/${row.id}`)}
+        >
+          View
+        </BlueButton>
+
+        <ActionMenu actions={actions} />
+      </>
+    );
+  };
+
+  // ===== SPEED DIAL ACTIONS =====
   const actions = [
     {
-      icon: <AddCardIcon color="primary" />, name: 'Add New Class',
-      action: () => navigate("/Admin/addclass")
+      icon: <AddCardIcon color="primary" />,
+      name: 'Add New Class',
+      action: () => navigate("/Admin/addclass"),
     },
     {
-      icon: <DeleteIcon color="error" />, name: 'Delete All Classes',
-      action: () => deleteHandler(adminID, "Sclasses")
+      icon: <DeleteIcon color="error" />,
+      name: 'Delete All Classes',
+      action: () => deleteHandler(adminID, "Sclasses"),
     },
   ];
 
-  // Render the component
+  // ===== RENDER =====
   return (
     <>
-      {loading ?
+      {loading ? (
         <div>Loading...</div>
-        :
+      ) : (
         <>
-          {getresponse ?
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-              <ButtonContainer>
-                <GreenButton variant="contained" onClick={() => navigate("/Admin/addclass")}>
-                   Add Class
-                </GreenButton>
-              </ButtonContainer>
+          {getresponse ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+              <GreenButton
+                variant="contained"
+                onClick={() => navigate("/Admin/addclass")}
+              >
+                Add Class
+              </GreenButton>
             </Box>
-            :
-            <>
-              {Array.isArray(sclassesList) && sclassesList.length > 0 &&
-                <TableTemplate buttonHaver={SclassButtonHaver} columns={sclassColumns} rows={sclassRows} />
-              }
+          ) : (
+            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+              {Array.isArray(sclassRows) && sclassRows.length > 0 && (
+                <TableTemplate
+                  columns={sclassColumns}
+                  rows={sclassRows}
+                  buttonHaver={SclassButtonHaver}
+                />
+              )}
               <SpeedDialTemplate actions={actions} />
-            </>}
+            </Paper>
+          )}
         </>
-      }
-      <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
+      )}
 
+      <Popup
+        message={message}
+        setShowPopup={setShowPopup}
+        showPopup={showPopup}
+      />
     </>
   );
 };
 
-// Export the ShowClasses component
 export default ShowClasses;
 
+// ===== STYLES =====
 const styles = {
   styledPaper: {
     overflow: 'visible',
-    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-    mt: 1.5,
-    '& .MuiAvatar-root': {
-      width: 32,
-      height: 32,
-      ml: -0.5,
-      mr: 1,
-    },
+    mt: 1,
     '&:before': {
       content: '""',
       display: 'block',
@@ -208,5 +220,5 @@ const styles = {
       transform: 'translateY(-50%) rotate(45deg)',
       zIndex: 0,
     },
-  }
-}
+  },
+};

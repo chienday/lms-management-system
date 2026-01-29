@@ -98,15 +98,17 @@ const ClassDetails = () => {
 
     const subjectColumns = [
         // Define columns for the subjects table
-        { id: 'name', label: 'Subject Name', minWidth: 170 },
-        { id: 'code', label: 'Subject Code', minWidth: 100 },
+        { id: 'name', label: 'Sub Name', minWidth: 170 },
+        { id: 'sessions', label: 'Sessions', minWidth: 100 },
+        { id: 'class', label: 'Class', minWidth: 100 },
     ]
 
     const subjectRows = subjectsList && subjectsList.length > 0 && subjectsList.map((subject) => {
         return {
             // Map subject data to table rows
             name: subject.subName,
-            code: subject.subCode,
+            sessions: subject.sessions || 0,
+            class: sclassDetails?.sclassName || '',
             id: subject._id,
         };
     })
