@@ -1,0 +1,124 @@
+# Chủ Nghĩa Xã Hội và Tư Bản
+
+## 1. Karl Marx và Chủ nghĩa xã hội khoa học
+
+### Cuộc đời và sự nghiệp
+Karl Marx (1818-1883) sinh tại Đức, bị trục xuất khỏi nhiều nước châu Âu vì hoạt động cách mạng. Ông sống lưu vong tại London và viết tác phẩm "Tư bản" cùng với Friedrich Engels.
+
+### Lý thuyết giá trị thặng dư
+Marx phân tích rằng giá trị của hàng hóa được tạo ra bởi lao động. Tư bản gia tăng giá trị thông qua việc khai thác lao động không công của công nhân.
+
+**Công thức cơ bản:**
+```
+Giá trị hàng hóa = Giá trị lao động + Giá trị thặng dư
+```
+
+### Các giai đoạn phát triển xã hội
+Theo Marx, xã hội phát triển qua các giai đoạn:
+1. **Xã hội nguyên thủy**: Không có giai cấp
+2. **Xã hội nô lệ**: Chủ nô lệ và nô lệ
+3. **Xã hội phong kiến**: Địa chủ và nông nô
+4. **Xã hội tư bản**: Tư sản và vô sản
+5. **Xã hội cộng sản**: Không giai cấp, không nhà nước
+
+### Biện chứng duy vật
+Marx phát triển phép biện chứng Hegel nhưng đứng trên lập trường duy vật:
+- **Động lực phát triển**: Mâu thuẫn giai cấp
+- **Cách mạng**: Bước nhảy vọt từ thấp đến cao
+- **Độc tài vô sản**: Giai đoạn chuyển tiếp
+
+## 2. Max Weber và Chủ nghĩa tư bản
+
+### Sự ra đời của tinh thần tư bản
+Weber phân tích trong "Chủ nghĩa tân giáo và tinh thần tư bản" rằng đạo Calvin đã tạo ra "tinh thần tư bản" thông qua:
+- **Nghề nghiệp**: Làm việc chăm chỉ là cách thể hiện lòng tin
+- **Tiết kiệm**: Tích lũy của cải nhưng không hưởng thụ
+- **Tái đầu tư**: Đầu tư lại lợi nhuận vào sản xuất
+
+### Các loại hành động xã hội
+Weber phân loại hành động xã hội thành:
+- **Hành động mục đích**: Hướng tới kết quả cụ thể
+- **Hành động giá trị**: Dựa trên niềm tin và giá trị
+- **Hành động cảm xúc**: Dựa trên cảm xúc
+- **Hành động tập quán**: Theo thói quen
+
+### Quyền lực và uy tín
+Weber phân quyền lực thành ba loại:
+- **Quyền lực hợp pháp**: Dựa trên luật pháp
+- **Quyền lực truyền thống**: Dựa trên tập quán
+- **Quyền lực cá nhân**: Dựa trên sức hút cá nhân
+
+## 3. John Maynard Keynes và Chủ nghĩa Keynes
+
+### Phê phán chủ nghĩa tư bản tự do
+Keynes chỉ trích "tay vô hình" của Adam Smith trong thời kỳ khủng hoảng:
+- Thị trường không thể tự điều chỉnh
+- Cần sự can thiệp của nhà nước
+- Chính sách tài khóa và tiền tệ tích cực
+
+### Lý thuyết việc làm
+Keynes giải thích thất nghiệp không tự nguyện:
+```
+Y = C + I + G + (X - M)
+```
+Trong đó:
+- Y: Tổng sản phẩm quốc nội
+- C: Tiêu dùng
+- I: Đầu tư
+- G: Chi tiêu chính phủ
+- X - M: Xuất khẩu ròng
+
+### Chính sách kinh tế
+- **Chính sách tài khóa**: Tăng chi tiêu công, giảm thuế
+- **Chính sách tiền tệ**: Giảm lãi suất, tăng cung tiền
+- **Mục tiêu**: Đạt được việc làm đầy đủ
+
+## 4. Milton Friedman và Chủ nghĩa tự do mới
+
+### Chủ nghĩa tiền tệ
+Friedman cho rằng lạm phát là vấn đề tiền tệ:
+- Chính phủ nên kiểm soát cung tiền
+- Tăng trưởng tiền tệ ổn định 3-5%/năm
+- Loại bỏ sự can thiệp của nhà nước
+
+### Trường kinh tế Chicago
+Các nguyên tắc chính:
+- Thị trường tự do hiệu quả hơn nhà nước
+- Quyền sở hữu tư nhân
+- Tối thiểu hóa quy định
+- Thuế thấp, chi tiêu công thấp
+
+## 5. Sự khác biệt giữa các trường phái
+
+### Chủ nghĩa xã hội vs Tư bản chủ nghĩa
+| Tiêu chí | Chủ nghĩa xã hội | Chủ nghĩa tư bản |
+|----------|------------------|------------------|
+| Sở hữu | Sở hữu tập thể | Sở hữu tư nhân |
+| Phân phối | Theo nhu cầu | Theo đóng góp |
+| Vai trò nhà nước | Chi phối | Tối thiểu |
+| Động lực | Lập kế hoạch | Thị trường |
+
+### Keynes vs Friedman
+- **Keynes**: Can thiệp tích cực trong khủng hoảng
+- **Friedman**: Kiểm soát tiền tệ chặt chẽ, không can thiệp
+
+## 6. Các vấn đề đương đại
+
+### Toàn cầu hóa kinh tế
+- Sự dịch chuyển sản xuất sang các nước đang phát triển
+- Sự phụ thuộc lẫn nhau của các nền kinh tế
+- Thách thức đối với chủ nghĩa dân tộc kinh tế
+
+### Bất bình đẳng thu nhập
+- Khoảng cách giàu nghèo ngày càng tăng
+- Sự tập trung của cải vào tay thiểu số
+- Thách thức đối với ổn định xã hội
+
+### Biến đổi khí hậu
+- Chi phí xã hội của biến đổi khí hậu
+- Sự phân bổ công bằng trong giảm phát thải
+- Vai trò của thị trường carbon
+
+## Kết luận
+
+Chủ nghĩa xã hội và tư bản là hai hệ tư tưởng đối lập nhau nhưng cũng có những điểm tương đồng. Sự phát triển của lịch sử cho thấy không có mô hình nào hoàn hảo, mà mỗi mô hình đều có ưu và nhược điểm riêng. Việc kết hợp các yếu tố tích cực từ cả hai hệ thống có thể tạo ra một mô hình kinh tế - xã hội hiệu quả hơn.

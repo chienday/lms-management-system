@@ -1,0 +1,27 @@
+# Git
+.git
+.github
+
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+.DS_Store
+
+# Logs & test
+logs
+*.log
+coverage
+
+# Build output (nếu build trong container)
+dist
+build
