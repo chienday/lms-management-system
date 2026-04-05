@@ -14,8 +14,7 @@ import {
 } from "./userSlice";
 
 // Base URL for API - use environment variable or fallback to localhost for development
-const REACT_APP_BASE_URL ="http://localhost:5000";
-//process.env.REACT_APP_BASE_URL || "http://localhost:5000"; 
+const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5000"; 
 
 
 export const loginUser = (fields, role) => async (dispatch) => { // Async action to log in a user
@@ -38,7 +37,8 @@ export const loginUser = (fields, role) => async (dispatch) => { // Async action
       dispatch(authFailed(result.data.message)); // Dispatch authFailed with the error message
     }
   } catch (error) {
-    dispatch(authError(error)); // Dispatch authError with the error object
+    const errorMessage = error.response?.data?.message || error.message || "Login failed";
+    dispatch(authError(errorMessage)); // Dispatch authError with the error message (serializable)
   }
 };
 
@@ -63,7 +63,8 @@ export const registerUser = (fields, role) => async (dispatch) => { // Async act
       dispatch(authFailed(result.data.message)); // Dispatch authFailed with the error message
     }
   } catch (error) {
-    dispatch(authError(error)); // Dispatch authError with the error object
+    const errorMessage = error.response?.data?.message || error.message || "Registration failed";
+    dispatch(authError(errorMessage)); // Dispatch authError with the error message (serializable)
   }
 };
 
@@ -75,15 +76,24 @@ export const getUserDetails = (id, address) => async (dispatch) => {
   dispatch(getRequest());
 
   try {
+    console.log(`Fetching ${address} details for id:`, id);
     const result = await axios.get(
       `${REACT_APP_BASE_URL}/${address}/${id}`
     );
 
-    if (result.data) {
+    console.log(`${address} details response:`, result.data);
+
+    if (result.data && result.data._id) {
       dispatch(doneSuccess(result.data)); // Dispatch doneSuccess with the retrieved data
+    } else if (result.data && result.data.message) {
+      dispatch(getFailed(result.data.message)); // Handle error message from API
+    } else {
+      dispatch(getFailed("Invalid response from server"));
     }
   } catch (error) {
-    dispatch(getError(error)); // Dispatch getError with the error object
+    console.error(`Error fetching ${address} details:`, error);
+    const errorMessage = error.response?.data?.message || error.message || `Failed to fetch ${address} details`;
+    dispatch(getError(errorMessage)); // Dispatch getError with the error message (serializable)
   }
 };
 
@@ -100,7 +110,8 @@ export const deleteUser = (id, address) => async (dispatch) => { // Async action
       dispatch(getDeleteSuccess()); // Dispatch getDeleteSuccess to indicate successful deletion
     }
   } catch (error) {
-    dispatch(getError(error)); // Dispatch getError with the error object
+    const errorMessage = error.response?.data?.message || error.message || "Failed to delete user";
+    dispatch(getError(errorMessage)); // Dispatch getError with the error message (serializable)
   }
 };
 
@@ -121,7 +132,8 @@ export const updateUser = (fields, id, address) => async (dispatch) => { // Asyn
       dispatch(doneSuccess(result.data)); // Dispatch doneSuccess with the retrieved data
     }
   } catch (error) {
-    dispatch(getError(error)); // Dispatch getError with the error object
+    const errorMessage = error.response?.data?.message || error.message || "Failed to update user";
+    dispatch(getError(errorMessage)); // Dispatch getError with the error message (serializable)
   }
 };
 
@@ -142,6 +154,7 @@ export const addStuff = (fields, address) => async (dispatch) => { // Async acti
       dispatch(stuffAdded(result.data)); // Dispatch stuffAdded with the retrieved data
     }
   } catch (error) {
-    dispatch(authError(error)); // Dispatch authError with the error object
+    const errorMessage = error.response?.data?.message || error.message || "Failed to add item";
+    dispatch(authError(errorMessage)); // Dispatch authError with the error message (serializable)
   }
 };

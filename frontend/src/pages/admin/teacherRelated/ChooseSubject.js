@@ -32,24 +32,24 @@ const ChooseSubject = ({ situation }) => {
             setTeacherID(teacherID);
             dispatch(getTeacherFreeClassSubjects(classID));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [situation]);
     // Conditional rendering based on loading state
     if (loading) {
-        return <div>Loading...</div>;
-    } 
+        return <div>Đang tải...</div>;
+    }
     // Conditional rendering based on whether there are subjects
     else if (response) {
         return <div>
-            <h1>Sorry all subjects have teachers assigned already</h1>
+            <h1>Xin lỗi tất cả các môn học đã có giáo viên phụ trách</h1>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
                 <PurpleButton variant="contained"
                     onClick={() => navigate("/Admin/addsubject/" + classID)}>
-                    Add Subjects
+                    Thêm môn học
                 </PurpleButton>
             </Box>
         </div>; // Message to show when there are no subjects
-    } 
+    }
     // Log any errors to the console
     else if (error) {
         console.log(error)
@@ -64,7 +64,7 @@ const ChooseSubject = ({ situation }) => {
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <Typography variant="h6" gutterBottom component="div">
-                Choose a subject
+                Chọn môn học
             </Typography>
             <>
                 {/* Table to show the subjects */}
@@ -73,10 +73,10 @@ const ChooseSubject = ({ situation }) => {
                         <TableHead>
                             <StyledTableRow>
                                 <StyledTableCell></StyledTableCell>
-                                <StyledTableCell align="center">Subject Name</StyledTableCell>
+                                <StyledTableCell align="center">Tên môn học</StyledTableCell>
                                 {/* Table header */}
-                                <StyledTableCell align="center">Subject Code</StyledTableCell>
-                                <StyledTableCell align="center">Actions</StyledTableCell>
+                                <StyledTableCell align="center">Mã môn học</StyledTableCell>
+                                <StyledTableCell align="center">Hành động</StyledTableCell>
                             </StyledTableRow>
                         </TableHead>
                         <TableBody>
@@ -93,7 +93,7 @@ const ChooseSubject = ({ situation }) => {
                                         {situation === "Norm" ? // If the situation is "Norm", navigate to the add teacher page
                                             <GreenButton variant="contained"
                                                 onClick={() => navigate("/Admin/teachers/addteacher/" + subject._id)}>
-                                                Choose
+                                                Chọn
                                             </GreenButton>
                                             :
                                             <GreenButton variant="contained" disabled={loader}
@@ -101,7 +101,7 @@ const ChooseSubject = ({ situation }) => {
                                                 {loader ? (
                                                     <div className="load"></div>
                                                 ) : (
-                                                    'Choose Sub' // Button to choose a subject
+                                                    'Chọn môn học' // Button to choose a subject
                                                 )}
                                             </GreenButton>}
                                     </StyledTableCell>

@@ -77,44 +77,44 @@ const AddTeacher = () => {
     <div> {/* Main container for the component */}
       <div className="register"> {/* Container for the registration form */}
         <form className="registerForm" onSubmit={submitHandler}> {/* Registration form */}
-          <span className="registerTitle">Add Teacher</span> {/* Title of the form */}
+          <span className="registerTitle">Thêm giáo viên</span> {/* Title of the form */}
           <br /> {/* Line break */}
           {/* Display subject name */}
           <label>
-            Subject : {subjectDetails && subjectDetails.subName} 
+            Môn học : {subjectDetails && subjectDetails.subName}
           </label>
           {/* Display class name */}
           <label>
-            Class : {subjectDetails && subjectDetails.sclassName && subjectDetails.sclassName.sclassName} 
+            Lớp : {subjectDetails && subjectDetails.sclassName && subjectDetails.sclassName.sclassName}
           </label>
           {/* Input field for teacher's name */}
-          <label>Name</label> 
-          <input className="registerInput" type="text" placeholder="Enter teacher's name..."
+          <label>Tên giáo viên</label>
+          <input className="registerInput" type="text" placeholder="Nhập tên giáo viên..."
             value={name} // Bind the value to the state variable
             onChange={(event) => setName(event.target.value)} // Update the state variable on change
             autoComplete="name" required /> {/* Input field for teacher's name */}
 
           {/* Input field for teacher's email */}
-          <label>Email</label> 
-          <input className="registerInput" type="email" placeholder="Enter teacher's email..."
+          <label>Email</label>
+          <input className="registerInput" type="email" placeholder="Nhập email giáo viên..."
             value={email} // Bind the value to the state variable
             onChange={(event) => setEmail(event.target.value)} // Update the state variable on change
             autoComplete="email" required /> {/* Input field for teacher's email */}
 
           {/* Input field for teacher's password */}
-          <label>Password</label> 
-          <input className="registerInput" type="password" placeholder="Enter teacher's password..."
+          <label>Mật khẩu</label>
+          <input className="registerInput" type="password" placeholder="Nhập mật khẩu giáo viên..."
             value={password} // Bind the value to the state variable
             onChange={(event) => setPassword(event.target.value)} // Update the state variable on change
             autoComplete="new-password" required /> {/* Input field for teacher's password */}
 
           {/* Submit button */}
-          <button className="registerButton" type="submit" disabled={loader}> 
+          <button className="registerButton" type="submit" disabled={loader}>
             {/* Conditional rendering for loading indicator */}
             {loader ? (
               <CircularProgress size={24} color="inherit" /> // Show loading indicator when loader is true
             ) : (
-              'Register' // Show 'Register' text when loader is false
+              'Đăng ký' // Show 'Register' text when loader is false
             )}
           </button>
         </form>

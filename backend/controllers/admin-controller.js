@@ -37,10 +37,10 @@ const adminRegister = async (req, res) => {
 
     if (existingAdminByEmail) {
       // Send error if the email already exists in the database
-      res.send({ message: "Email already exists" });
+      res.status(400).json({ message: "Email already exists" });
     } else if (existingSchool) {
       // Send error if the school name already exists in the database
-      res.send({ message: "School name already exists" });
+      res.status(400).json({ message: "School name already exists" });
     } else {
       // Save the new admin document to the database
       let result = await admin.save();
@@ -77,15 +77,15 @@ const adminLogIn = async (req, res) => {
         res.send(admin);
       } else {
         // Password did not match, send an error message
-        res.send({ message: "Invalid password" });
+        res.status(401).json({ message: "Invalid password" });
       }
     } else {
       // No admin found with the provided email
-      res.send({ message: "User not found" });
+      res.status(404).json({ message: "User not found" });
     }
   } else {
     // Email or password not provided in the request
-    res.send({ message: "Email and password are required" });
+    res.status(400).json({ message: "Email and password are required" });
   }
 };
 

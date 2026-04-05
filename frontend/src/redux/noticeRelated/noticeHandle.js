@@ -4,6 +4,18 @@ import { getRequest, getSuccess, getFailed, getError } from "./noticeSlice";
 // Base URL for API - use environment variable or fallback to localhost for development
 const REACT_APP_BASE_URL = "http://localhost:5000";
 
+// Helper function to convert AxiosError to serializable object
+const serializeError = (error) => {
+  if (error && typeof error === 'object') {
+    return {
+      message: error.message || 'An error occurred',
+      status: error.response?.status || error.status || null,
+      code: error.code || null
+    };
+  }
+  return error;
+};
+
 // Async action to fetch all notices
 export const getAllNotices = (id, address) => async (dispatch) => {
   dispatch(getRequest());
@@ -24,6 +36,6 @@ export const getAllNotices = (id, address) => async (dispatch) => {
   } 
   catch (error) {
     // Dispatch getError with the error object if an error occurs
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   }
 };

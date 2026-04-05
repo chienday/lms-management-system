@@ -45,7 +45,15 @@ const studentSlice = createSlice({
     // Reducer to handle a request that resulted in an error
     getError: (state, action) => {
       state.loading = false;
-      state.error = action.payload;
+      // Extract only the error message as string
+      const error = action.payload;
+      if (error && typeof error === 'object' && (error.message || error.code)) {
+        state.error = error.message || 'An error occurred';
+      } else if (typeof error === 'string') {
+        state.error = error;
+      } else {
+        state.error = 'An error occurred';
+      }
     },
 
     // Reducer to reset the student state to idle

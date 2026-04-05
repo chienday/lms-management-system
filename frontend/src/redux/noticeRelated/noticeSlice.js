@@ -33,9 +33,16 @@ const noticeSlice = createSlice({
         },
         // Reducer to handle a request that resulted in an error
         getError: (state, action) => {
-            // Set the error state with the payload error
+            // Set the error state with the payload error message
             state.loading = false;
-            state.error = action.payload;
+            const error = action.payload;
+            if (error && typeof error === 'object' && (error.message || error.code)) {
+                state.error = error.message || 'An error occurred';
+            } else if (typeof error === 'string') {
+                state.error = error;
+            } else {
+                state.error = 'An error occurred';
+            }
         }
     },
 });

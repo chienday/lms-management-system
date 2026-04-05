@@ -12,6 +12,11 @@ const studentSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    // Email of the student
+    email: {
+        type: String,
+        default: ''
+    },
     // Password of the student, required field
     password: {
         type: String,
@@ -34,6 +39,12 @@ const studentSchema = new mongoose.Schema({
         type: String,
         default: "Student"
     },
+    // Account status: 'Active' or 'Locked'
+    accountStatus: {
+        type: String,
+        enum: ['Active', 'Locked'],
+        default: 'Active'
+    },
     // Array of exam results for the student
     examResult: [
         {
@@ -49,26 +60,30 @@ const studentSchema = new mongoose.Schema({
             }
         }
     ],
-    // Array of attendance records for the student
-    attendance: [{
-        // Date of the attendance record, required field
-        date: {
-            type: Date,
-            required: true
-        },
-        // Status of the student's attendance (Present or Absent), required field
-        status: {
+
+    // Last AI learning analysis result for this student
+    learningAnalysis: {
+        riskLevel: {
             type: String,
-            enum: ['Present', 'Absent'],
-            required: true
+            enum: ['LOW', 'MEDIUM', 'HIGH'],
         },
-        subName: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'subject',
-            required: true
-            // Reference to the subject for which attendance is recorded, required field
-        }
-    }]
+        learningBehavior: [{
+            type: String,
+        }],
+        analysis: {
+            type: String,
+        },
+        recommendations: [{
+            type: String,
+        }],
+        avgScore: {
+            type: Number,
+        },
+        // date/time when this analysis was generated
+        analyzedAt: {
+            type: Date,
+        },
+    }
 });
 
 module.exports = mongoose.model("student", studentSchema);

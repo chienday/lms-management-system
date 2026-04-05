@@ -1,158 +1,150 @@
-import React, { useEffect, useState } from 'react'
-// Import necessary modules and components
-import { useDispatch, useSelector } from 'react-redux';
-import { getSubjectList } from '../../redux/sclassRelated/sclassHandle';
-import { BottomNavigation, BottomNavigationAction, Container, Paper, Table, TableBody, TableHead, Typography } from '@mui/material';
-import { getUserDetails } from '../../redux/userRelated/userHandle';
-import CustomBarChart from '../../components/CustomBarChart'
-
-import InsertChartIcon from '@mui/icons-material/InsertChart';
-import InsertChartOutlinedIcon from '@mui/icons-material/InsertChartOutlined';
-import TableChartIcon from '@mui/icons-material/TableChart';
-import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import {
+    Box,
+    Paper,
+    Table,
+    TableBody,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TableCell,
+    Typography,
+    Alert,
+} from '@mui/material';
 import { StyledTableCell, StyledTableRow } from '../../components/styles';
 
+const API_BASE_URL = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:5000' 
+    : '/api';
+
 const StudentSubjects = () => {
-    // Initialize dispatch for Redux actions
-
-    const dispatch = useDispatch();
-    const { subjectsList, sclassDetails } = useSelector((state) => state.sclass);
-    const { userDetails, currentUser, loading, response, error } = useSelector((state) => state.user);
+    const { currentUser } = useSelector((state) => state.user);
+    const [subjects, setSubjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        dispatch(getUserDetails(currentUser._id, "Student"));
-    }, [dispatch, currentUser._id])
-
-    if (response) { console.log(response) }
-    else if (error) { console.log(error) }
-
-    const [subjectMarks, setSubjectMarks] = useState([]);
-    // State to manage the selected section (table or chart)
-    const [selectedSection, setSelectedSection] = useState('table');
-
-    // Update subject marks when userDetails change
-    useEffect(() => {
-        if (userDetails) {
-            setSubjectMarks(userDetails.examResult || []);
+        if (currentUser?._id) {
+            loadStudentSubjects();
         }
-        // Dependency array includes userDetails
-    }, [userDetails])
+    }, [currentUser?._id]);
 
-    useEffect(() => {
-        if (subjectMarks === [])
-             {
-            dispatch(getSubjectList(currentUser.sclassName._id, "ClassSubjects"));
+    const loadStudentSubjects = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const response = await fetch(`${API_BASE_URL}/Student/${currentUser._id}/Subjects`);
+            const data = await response.json();
+
+            if (data.subjects) {
+                setSubjects(data.subjects);
+            } else {
+                setError(data.message || 'Không thể tải danh sách môn học');
+            }
+        } catch (err) {
+            console.error('Error loading subjects:', err);
+            setError(err.message || 'Lỗi khi tải môn học');
+        } finally {
+            setLoading(false);
         }
-    }, [subjectMarks, dispatch, currentUser.sclassName._id]);
-
-    // Function to handle section change (table or chart)
-    const handleSectionChange = (event, newSection) => {
-        setSelectedSection(newSection);
-    };
-
-    // Function to render the table section
-    const renderTableSection = () => {
-        return (
-            <>
-                <Typography variant="h4" align="center" gutterBottom>
-                    Subject Marks
-                </Typography>
-                <Table>
-                    <TableHead>
-                        <StyledTableRow>
-                            <StyledTableCell>Subject</StyledTableCell>
-                            <StyledTableCell>Marks</StyledTableCell>
-                        </StyledTableRow>
-                    </TableHead>
-                    <TableBody>
-                        {/* Map through subjectMarks to display each subject's marks */}
-                        {subjectMarks.map((result, index) => {
-                            if (!result.subName || !result.marksObtained) {
-                                return null;
-                            }
-                            return (
-                                <StyledTableRow key={index}>
-                                    <StyledTableCell>{result.subName.subName}</StyledTableCell>
-                                    <StyledTableCell>{result.marksObtained}</StyledTableCell>
-                                </StyledTableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </>
-        );
-    };
-
-    // Function to render the chart section
-    const renderChartSection = () => {
-        return <CustomBarChart chartData={subjectMarks} dataKey="marksObtained" />;
-    };
-
-    // Function to render the class details section
-    const renderClassDetailsSection = () => {
-        return (
-            <Container>
-                <Typography variant="h4" align="center" gutterBottom>
-                    Class Details
-                </Typography>
-                <Typography variant="h5" gutterBottom>
-                    You are currently in Class {sclassDetails && sclassDetails.sclassName}
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                    And these are the subjects:
-                </Typography>
-                {/* Map through subjectsList to display each subject */}
-                {subjectsList &&
-                    subjectsList.map((subject, index) => (
-                        <div key={index}>
-                            <Typography variant="subtitle1">
-                                {subject.subName} ({subject.subCode})
-                            </Typography>
-                        </div>
-                    ))}
-            </Container>
-        );
     };
 
     return (
-        <>
-            {/* Display loading message while data is being fetched */}
-            {loading ? (
-                <div>Loading...</div>
-            ) : (
-                <div>
-                    {/* Check if subjectMarks is available and has data */}
-                    {subjectMarks && Array.isArray(subjectMarks) && subjectMarks.length > 0
-                        ?
-                        // If subjectMarks has data, render table or chart based on selectedSection
-                        (<>
-                            {selectedSection === 'table' && renderTableSection()}
-                            {selectedSection === 'chart' && renderChartSection()}
+        <Box sx={{
+            padding: '24px',
+        }}>
+            {/* Header Section */}
+            <Box sx={{
+                marginBottom: '24px',
+            }}>
+                <Typography variant="h4" fontWeight={700} gutterBottom>
+                    📘 Môn Học Của Tôi
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    Danh sách các môn học đã đăng ký trong hệ thống
+                </Typography>
+            </Box>
 
-                            <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
-                                <BottomNavigation value={selectedSection} onChange={handleSectionChange} showLabels>
-                                    <BottomNavigationAction
-                                        label="Table"
-                                        value="table"
-                                        icon={selectedSection === 'table' ? <TableChartIcon /> : <TableChartOutlinedIcon />}
-                                    />
-                                    <BottomNavigationAction
-                                        label="Chart"
-                                        value="chart"
-                                        icon={selectedSection === 'chart' ? <InsertChartIcon /> : <InsertChartOutlinedIcon />}
-                                    />
-                                </BottomNavigation>
-                            </Paper>
-                        </>)
-                        :
-                        // If subjectMarks is empty, render class details
-                        (<>
-                            {renderClassDetailsSection()}
-                        </>)
-                    }
-                </div>
+            {error && (
+                <Alert severity="error" onClose={() => setError(null)} sx={{ mb: '16px' }}>
+                    {error}
+                </Alert>
             )}
-        </>
+
+            {subjects.length === 0 ? (
+                <Alert severity="info">
+                    Bạn chưa được đăng ký môn học nào. Vui lòng liên hệ quản trị viên.
+                </Alert>
+            ) : (
+                <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                    <TableContainer>
+                        <Table stickyHeader aria-label="sticky table">
+                            {/* Table Header */}
+                            <TableHead>
+                                <StyledTableRow>
+                                    <StyledTableCell align="left" style={{ minWidth: 180 }}>
+                                        Môn Học
+                                    </StyledTableCell>
+                                    <StyledTableCell align="left" style={{ minWidth: 100 }}>
+                                        Mã Môn
+                                    </StyledTableCell>
+                                    <StyledTableCell align="left" style={{ minWidth: 150 }}>
+                                        Giáo Viên
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center" style={{ minWidth: 80 }}>
+                                        Số Buổi
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center" style={{ minWidth: 100 }}>
+                                        Trạng Thái
+                                    </StyledTableCell>
+                                </StyledTableRow>
+                            </TableHead>
+
+                            {/* Table Body */}
+                            <TableBody>
+                                {subjects.map((subject) => (
+                                    <StyledTableRow hover role="checkbox" tabIndex={-1} key={subject._id}>
+                                        <TableCell align="left">
+                                            <Typography variant="body2" fontWeight={500}>
+                                                {subject.subName}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <Typography variant="body2" fontWeight={600} sx={{ color: '#667eea' }}>
+                                                {subject.subCode}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <Typography variant="body2">
+                                                {subject.teacher.name}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography variant="body2" fontWeight={600}>
+                                                {subject.sessions || 0}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography 
+                                                variant="body2" 
+                                                fontWeight={600}
+                                                sx={{
+                                                    color: subject.status === 'active' ? '#22c55e' : '#ef4444',
+                                                }}
+                                            >
+                                                {subject.status === 'active' ? '✓ Hoạt động' : '✗ Dừng'}
+                                            </Typography>
+                                        </TableCell>
+                                    </StyledTableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Paper>
+            )}
+        </Box>
     );
 };
 

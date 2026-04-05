@@ -11,6 +11,18 @@ import {
 // Base URL for API - use environment variable or fallback to localhost for development
 const REACT_APP_BASE_URL ="http://localhost:5000";
 
+// Helper function to convert AxiosError to serializable object
+const serializeError = (error) => {
+  if (error && typeof error === 'object') {
+    return {
+      message: error.message || 'An error occurred',
+      status: error.response?.status || error.status || null,
+      code: error.code || null
+    };
+  }
+  return error;
+};
+
 // Async action to fetch all teachers
 export const getAllTeachers = (id) => async (dispatch) => {
   dispatch(getRequest()); // Dispatch getRequest to indicate the start of the request
@@ -27,7 +39,7 @@ export const getAllTeachers = (id) => async (dispatch) => {
       dispatch(getSuccess(result.data)); // Dispatch getSuccess with the retrieved data
     }
   } catch (error) {
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   }
 };
 
@@ -45,7 +57,7 @@ export const getTeacherDetails = (id) => async (dispatch) => {
       dispatch(doneSuccess(result.data));
     }
   } catch (error) {
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   }
 };
 
@@ -66,6 +78,6 @@ export const updateTeachSubject =
       dispatch(postDone()); // Dispatch postDone to indicate successful update
 
     } catch (error) {
-      dispatch(getError(error));
+      dispatch(getError(serializeError(error)));
     }
   };

@@ -11,6 +11,18 @@ import {
 const REACT_APP_BASE_URL ="http://localhost:5000"
  //process.env.REACT_APP_BASE_URL || "http://localhost:5000";
 
+// Helper function to convert AxiosError to serializable object
+const serializeError = (error) => {
+  if (error && typeof error === 'object') {
+    return {
+      message: error.message || 'An error occurred',
+      status: error.response?.status || error.status || null,
+      code: error.code || null
+    };
+  }
+  return error;
+};
+
 // Async action to fetch all students
 export const getAllStudents = (id) => async (dispatch) => {
   dispatch(getRequest()); // Dispatch getRequest to indicate the start of the request
@@ -28,7 +40,7 @@ export const getAllStudents = (id) => async (dispatch) => {
       dispatch(getSuccess(result.data)); // Dispatch getSuccess with the retrieved data
     }
   } catch (error) {
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   }
 };
 
@@ -53,7 +65,7 @@ export const updateStudentFields =
         dispatch(stuffDone()); // Dispatch stuffDone to indicate successful update
       }
     } catch (error) {
-      dispatch(getError(error));
+      dispatch(getError(serializeError(error)));
     }
   };
 
@@ -72,6 +84,6 @@ export const removeStuff = (id, address) => async (dispatch) => {
       dispatch(stuffDone()); // Dispatch stuffDone to indicate successful removal
     }
   } catch (error) {
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   }
 };

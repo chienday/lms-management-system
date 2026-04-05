@@ -18,7 +18,7 @@ const teacherRegister = async (req, res) => {
 
         // If a teacher with the same email exists, send an error message
         if (existingTeacherByEmail) {
-            res.send({ message: 'Email already exists' });
+            res.status(400).json({ message: 'Email already exists' });
         }
         // If no existing teacher is found, create a new teacher
         else {
@@ -64,12 +64,12 @@ const teacherLogIn = async (req, res) => {
             // If the password is not valid
             } else {
                 // Send an error message
-                res.send({ message: "Invalid password" });
+                res.status(401).json({ message: "Invalid password" });
             }
         // If no teacher is found
         } else {
             // Send an error message
-            res.send({ message: "Teacher not found" });
+            res.status(404).json({ message: "Teacher not found" });
         }
     } catch (err) {
         res.status(500).json(err);
@@ -227,38 +227,158 @@ const deleteTeachersByClass = async (req, res) => {
     }
 };
 
-// Function to update a teacher's attendance for a specific date
-const teacherAttendance = async (req, res) => {
-    const { status, date } = req.body;
-
+// Function to reset teacher password
+const resetTeacherPassword = async (req, res) => {
+    const { teacherId, newPassword } = req.body;
     try {
+        if (!teacherId || !newPassword) {
+            return res.status(400).json({ message: "Teacher ID and new password are required" });
+        }
+
         // Find the teacher by ID
-        const teacher = await Teacher.findById(req.params.id);
-
-        // If no teacher is found
+        const teacher = await Teacher.findById(teacherId);
         if (!teacher) {
-            return res.send({ message: 'Teacher not found' });
+            return res.status(404).json({ message: "Teacher not found" });
         }
 
-        // Check if attendance for the date already exists
-        const existingAttendance = teacher.attendance.find(
-            (a) =>
-                a.date.toDateString() === new Date(date).toDateString()
-        );
+        // Hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPass = await bcrypt.hash(newPassword, salt);
 
-        // If attendance already exists, update the status
-        if (existingAttendance) {
-            existingAttendance.status = status;
-        // If no attendance exists, add a new one
-        } else {
-            teacher.attendance.push({ date, status });
+        // Update the password
+        teacher.password = hashedPass;
+        const result = await teacher.save();
+
+        // Return without password
+        result.password = undefined;
+        return res.status(200).json({
+            message: "Password reset successfully",
+            teacher: result
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+// Function to update teacher information
+const updateTeacher = async (req, res) => {
+    const { teacherId, name, email, teachSclass } = req.body;
+    try {
+        if (!teacherId) {
+            return res.status(400).json({ message: "Teacher ID is required" });
         }
-        // Save the teacher
+
+        // Find the teacher by ID
+        const teacher = await Teacher.findById(teacherId);
+        if (!teacher) {
+            return res.status(404).json({ message: "Teacher not found" });
+        }
+
+        // Check if new email is already in use by another teacher
+        if (email && email !== teacher.email) {
+            const existingTeacher = await Teacher.findOne({ email });
+            if (existingTeacher) {
+                return res.status(400).json({ message: "Email already in use" });
+            }
+            teacher.email = email;
+        }
+
+        // Update other fields
+        if (name) teacher.name = name;
+        if (teachSclass) teacher.teachSclass = teachSclass;
 
         const result = await teacher.save();
-        return res.send(result);
+        result.password = undefined;
+
+        return res.status(200).json({
+            message: "Teacher updated successfully",
+            teacher: result
+        });
     } catch (error) {
-        res.status(500).json(error)
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+// Function to get teacher with their teaching assignments
+const getTeacherWithAssignments = async (req, res) => {
+    try {
+        const teacherId = req.params.id;
+        
+        // Find teacher with populated details
+        let teacher = await Teacher.findById(teacherId)
+            .populate("teachSubject", "subName sessions")
+            .populate("school", "schoolName")
+            .populate("teachSclass", "sclassName");
+
+        if (!teacher) {
+            return res.status(404).json({ message: "Teacher not found" });
+        }
+
+        // Find all teaching assignments for this teacher
+        const TeachingAssignment = require('../models/teachingAssignmentSchema.js');
+        const assignments = await TeachingAssignment.find({ teacher: teacherId })
+            .populate("subject", "subName")
+            .populate("classes", "sclassName")
+            .populate("school", "schoolName");
+
+        // Count number of assignments
+        const assignmentStats = {
+            totalAssignments: assignments.length,
+            totalClasses: new Set(assignments.flatMap(a => a.classes.map(c => c._id.toString()))).size,
+            totalSubjects: new Set(assignments.map(a => a.subject._id.toString())).size,
+            assignments: assignments
+        };
+
+        teacher.password = undefined;
+        return res.status(200).json({
+            teacher,
+            assignments: assignmentStats
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+// Function to get comprehensive teacher statistics
+const getTeacherStats = async (req, res) => {
+    try {
+        const teacherId = req.params.id;
+        
+        const TeachingAssignment = require('../models/teachingAssignmentSchema.js');
+        const Assignment = require('../models/assignmentSchema.js');
+
+        // Get teacher
+        const teacher = await Teacher.findById(teacherId)
+            .populate("school", "schoolName");
+
+        if (!teacher) {
+            return res.status(404).json({ message: "Teacher not found" });
+        }
+
+        // Get teaching assignments
+        const assignments = await TeachingAssignment.find({ teacher: teacherId })
+            .populate("subject", "subName")
+            .populate("classes", "sclassName");
+
+        // Get assignments created by this teacher
+        const createdAssignments = await Assignment.countDocuments({ teacher: teacherId });
+
+        // Calculate statistics
+        const stats = {
+            name: teacher.name,
+            email: teacher.email,
+            totalSubjects: assignments.length,
+            totalClasses: new Set(assignments.flatMap(a => a.classes.map(c => c._id.toString()))).size,
+            assignmentsCreated: createdAssignments,
+            subjects: assignments.map(a => ({
+                subjectName: a.subject.subName,
+                classes: a.classes.map(c => c.sclassName)
+            }))
+        };
+
+        return res.status(200).json(stats);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -271,5 +391,8 @@ module.exports = {
     deleteTeacher,
     deleteTeachers,
     deleteTeachersByClass,
-    teacherAttendance
+    resetTeacherPassword,
+    updateTeacher,
+    getTeacherWithAssignments,
+    getTeacherStats
 };

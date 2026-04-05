@@ -31,30 +31,30 @@ const TeacherDetails = () => {
     return (
         <StyledCard elevation={3}>
             {loading ? (
-                <CardContent>Loading...</CardContent>
+                <CardContent>Đang tải...</CardContent>
             ) : (
                 <CardContent>
                     <Typography variant="h4" align="center" gutterBottom>
-                        Teacher Details
+                        Thông tin giáo viên
                     </Typography>
                     <Typography variant="h6" gutterBottom>
-                        Teacher Name: {teacherDetails?.name}
+                        Tên giáo viên: {teacherDetails?.name}
                     </Typography>
                     <Typography variant="h6" gutterBottom>
-                        Class Name: {teacherDetails?.teachSclass?.sclassName}
+                        Tên lớp: {teacherDetails?.teachSclass?.sclassName}
                     </Typography>
                     {isSubjectNamePresent ? (
                         <>
                             <Typography variant="h6" gutterBottom>
-                                Subject Name: {teacherDetails?.teachSubject?.subName}
+                                Tên môn học: {teacherDetails?.teachSubject?.subName}
                             </Typography>
                             <Typography variant="h6" gutterBottom>
-                                Subject Sessions: {teacherDetails?.teachSubject?.sessions}
+                                Số tiết: {teacherDetails?.teachSubject?.sessions}
                             </Typography>
                         </>
                     ) : (
                         <Button variant="contained" onClick={handleAddSubject}>
-                            Add Subject
+                            Thêm môn học
                         </Button>
                     )}
                 </CardContent>

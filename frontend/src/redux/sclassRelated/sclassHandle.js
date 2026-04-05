@@ -15,6 +15,18 @@ import {
 // Base URL for API - use environment variable or fallback to localhost for development
 const REACT_APP_BASE_URL = "http://localhost:5000";
 
+// Helper function to convert AxiosError to serializable object
+const serializeError = (error) => {
+  if (error && typeof error === 'object') {
+    return {
+      message: error.message || 'An error occurred',
+      status: error.response?.status || error.status || null,
+      code: error.code || null
+    };
+  }
+  return error;
+};
+
 export const getAllSclasses = (id, address) => async (dispatch) => {
   dispatch(getRequest()); // Dispatch getRequest to indicate the start of the request
 
@@ -31,7 +43,7 @@ export const getAllSclasses = (id, address) => async (dispatch) => {
       dispatch(getSuccess(result.data));
     }
   } catch (error) {
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   }
 };
 
@@ -51,7 +63,7 @@ export const getClassStudents = (id) => async (dispatch) => {
       dispatch(getStudentsSuccess(result.data)); // Dispatch getStudentsSuccess with the retrieved data
     }
   } catch (error) {
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   }
 };
 
@@ -70,7 +82,7 @@ export const getClassDetails = (id, address) => async (dispatch) => {
       dispatch(detailsSuccess(result.data));
     }
   } catch (error) {
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   }
 };
 
@@ -91,7 +103,7 @@ export const getSubjectList = (id, address) => async (dispatch) => {
       dispatch(getSubjectsSuccess(result.data));
     }
   } catch (error) {
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   }
 };
 
@@ -112,7 +124,7 @@ export const getTeacherFreeClassSubjects = (id) => async (dispatch) => {
       dispatch(getSubjectsSuccess(result.data));
     }
   } catch (error) {
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   }
 };
 
@@ -131,6 +143,6 @@ export const getSubjectDetails = (id, address) => async (dispatch) => {
       dispatch(getSubDetailsSuccess(result.data));
     }
   } catch (error) {
-    dispatch(getError(error));
+    dispatch(getError(serializeError(error)));
   } 
 };

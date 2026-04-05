@@ -45,9 +45,9 @@ const ShowNotices = () => {
 
   // Defining columns for the table
   const noticeColumns = [
-    { id: "title", label: "Title", minWidth: 170 },
-    { id: "details", label: "Details", minWidth: 100 },
-    { id: "date", label: "Date", minWidth: 170 },
+    { id: "title", label: "Tiêu đề", minWidth: 170 },
+    { id: "details", label: "Nội dung", minWidth: 100 },
+    { id: "date", label: "Ngày", minWidth: 170 },
   ];
 
   // Mapping notices data to table rows
@@ -83,12 +83,12 @@ const ShowNotices = () => {
   const actions = [
     {
       icon: <NoteAddIcon color="primary" />,
-      name: "Add New Notice",
+      name: "Thêm thông báo",
       action: () => navigate("/Admin/addnotice"),
     },
     {
       icon: <DeleteIcon color="error" />,
-      name: "Delete All Notices",
+      name: "Xóa tất cả thông báo",
       action: () => deleteHandler(currentUser._id, "Notices"),
     },
   ];
@@ -98,7 +98,7 @@ const ShowNotices = () => {
     <>
       {/* Displaying loading message while data is being fetched */}
       {loading ? (
-        <div>Loading...</div>
+        <div>Đang tải...</div>
       ) : (
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
           {/* Displaying table if notices are available */}
@@ -125,18 +125,18 @@ const ShowNotices = () => {
             >
               <img
                 src={nodata}
-                alt="No Data"
+                alt="Không có dữ liệu"
                 style={{ maxWidth: "100%", maxHeight: "225px" }}
               />
               <Typography variant="h5" sx={{ marginTop: "16px" }}>
-                No notices found
+                Chưa có thông báo
               </Typography>
               <ButtonContainer sx={{ marginTop: "16px" }}>
                 <GreenButton
                   variant="contained"
                   onClick={() => navigate("/Admin/addnotice")}
                 >
-                  Add Notice
+                  Thêm thông báo
                 </GreenButton>
               </ButtonContainer>
             </Box>

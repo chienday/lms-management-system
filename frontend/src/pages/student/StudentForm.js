@@ -89,12 +89,12 @@ const StudentForm = () => {
               <Grid container spacing={2} justifyContent="center">
                 <Typography variant="h6" gutterBottom>
                   {/* Form title */}
-                  Personal Information
+                  Thông tin cá nhân
                 </Typography>
                 <Grid item xs={10}>
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
-                      label="Date of Birth"
+                      label="Ngày sinh"
                       value={formData.dateOfBirth}
                       onChange={handleDateOfBirthChange}
                       renderInput={(params) => (
@@ -121,7 +121,7 @@ const StudentForm = () => {
                 {/* Gender select */}
                 <Grid item xs={10}>
                   <FormControl fullWidth>
-                    <InputLabel id="gender-label">Gender</InputLabel>
+                    <InputLabel id="gender-label">Giới tính</InputLabel>
                     <Select
                       labelId="gender-label"
                       id="gender"
@@ -129,11 +129,11 @@ const StudentForm = () => {
                       value={formData.gender}
                       onChange={handleInputChange}
                     >
-                      <MenuItem value="Male">Male</MenuItem>
-                      <MenuItem value="Female">Female</MenuItem>
-                      <MenuItem value="Other">Other</MenuItem>
+                      <MenuItem value="Male">Nam</MenuItem>
+                      <MenuItem value="Female">Nữ</MenuItem>
+                      <MenuItem value="Other">Khác</MenuItem>
                       <MenuItem value="Prefer not to say">
-                        Prefer not to say
+                        Không muốn trả lời
                       </MenuItem>
                     </Select>
                   </FormControl>
@@ -152,19 +152,19 @@ const StudentForm = () => {
                 <Grid item xs={10}>
                   <TextField
                     fullWidth
-                    label="Phone"
+                    label="Số điện thoại"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
                     error={phoneError}
-                    helperText={phoneError && "Phone number must be 10 digits"}
+                    helperText={phoneError && "Số điện thoại phải có 10 chữ số"}
                   />
                 </Grid>
                 {/* Address input */}
                 <Grid item xs={10}>
                   <TextField
                     fullWidth
-                    label="Address"
+                    label="Địa chỉ"
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
@@ -174,21 +174,21 @@ const StudentForm = () => {
                 <Grid item xs={10}>
                   <TextField
                     fullWidth
-                    label="Emergency Contact"
+                    label="Số điện thoại"
                     name="emergencyContact"
                     value={formData.emergencyContact}
                     onChange={handleInputChange}
                     error={emergencyContactError}
                     helperText={
                       emergencyContactError &&
-                      "Emergency contact must be 10 digits"
+                      "Số điện thoại phải có 10 chữ số"
                     }
                   />
                 </Grid>
                 {/* Submit button */}
                 <Grid item xs={10}>
                   <Button variant="contained" color="primary" type="submit">
-                    Save Details
+                    Lưu thông tin
                   </Button>
                 </Grid>
               </Grid>

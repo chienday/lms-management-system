@@ -1,300 +1,221 @@
-// Import necessary modules and components
 import React, { useEffect, useState } from "react";
-import {
-  getClassStudents,
-  getSubjectDetails,
-} from "../../../redux/sclassRelated/sclassHandle";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Box,
-  Tab,
   Container,
   Typography,
-  BottomNavigation,
-  BottomNavigationAction,
   Paper,
+  Button,
+  CircularProgress,
+  Alert,
+  IconButton,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
 } from "@mui/material";
-import {
-  BlueButton,
-  GreenButton,
-  PurpleButton,
-} from "../../../components/buttonStyles";
-import TableTemplate from "../../../components/TableTemplate";
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import axios from "axios";
 
-import InsertChartIcon from "@mui/icons-material/InsertChart";
-import InsertChartOutlinedIcon from "@mui/icons-material/InsertChartOutlined";
-import TableChartIcon from "@mui/icons-material/TableChart";
-import TableChartOutlinedIcon from "@mui/icons-material/TableChartOutlined";
-
-// Define the ViewSubject component
 const ViewSubject = () => {
   const navigate = useNavigate();
-  const params = useParams();
-  const dispatch = useDispatch();
-  const { subloading, subjectDetails, sclassStudents, getresponse, error } =
-    useSelector((state) => state.sclass);
+  const { subjectId } = useParams();
+  const { currentUser } = useSelector((state) => state.user);
+  const schoolId = currentUser?._id;
 
-  const { classID, subjectID } = params;
+  const API_BASE_URL =
+    process.env.NODE_ENV === "production"
+      ? "http://your-backend-api"
+      : "http://localhost:5000";
 
-  // Fetch subject details and class students when the component mounts
+  // States
+  const [subject, setSubject] = useState(null);
+  const [classes, setClasses] = useState([]);
+  const [teachers, setTeachers] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Load data on mount
   useEffect(() => {
-    dispatch(getSubjectDetails(subjectID, "Subject"));
-    dispatch(getClassStudents(classID));
-  }, [dispatch, subjectID, classID]);
+    if (schoolId && subjectId) {
+      loadSubjectDetails();
+      loadClasses();
+      loadTeachers();
+      loadStudents();
+    }
+  }, [schoolId, subjectId]);
 
-  // Log any errors to the console
-  if (error) {
-    console.log(error);
+  // ========== API Functions ==========
+  const loadSubjectDetails = async () => {
+    try {
+      setLoading(true);
+      const url = `${API_BASE_URL}/Subject/List/${schoolId}`;
+      const response = await axios.get(url);
+      if (response.data.subjects) {
+        const found = response.data.subjects.find((s) => s._id === subjectId);
+        if (found) {
+          setSubject(found);
+        } else {
+          setError("Subject not found");
+        }
+      }
+    } catch (err) {
+      console.error("Error loading subject:", err);
+      setError(err.response?.data?.message || "Error loading subject");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadClasses = async () => {
+    try {
+      const url = `${API_BASE_URL}/SclassList/${schoolId}`;
+      const response = await axios.get(url);
+      if (Array.isArray(response.data)) {
+        setClasses(response.data);
+      } else if (response.data.sclasses) {
+        setClasses(response.data.sclasses);
+      }
+    } catch (err) {
+      console.error("Error loading classes:", err);
+    }
+  };
+
+  const loadTeachers = async () => {
+    try {
+      const url = `${API_BASE_URL}/Teachers/${schoolId}`;
+      const response = await axios.get(url);
+      if (Array.isArray(response.data)) {
+        setTeachers(response.data);
+      } else if (response.data.teachers) {
+        setTeachers(response.data.teachers);
+      }
+    } catch (err) {
+      console.error("Error loading teachers:", err);
+    }
+  };
+
+  const loadStudents = async () => {
+    try {
+      const url = `${API_BASE_URL}/StudentList/${schoolId}`;
+      const response = await axios.get(url);
+      if (Array.isArray(response.data)) {
+        setStudents(response.data);
+      } else if (response.data.students) {
+        setStudents(response.data.students);
+      }
+    } catch (err) {
+      console.error("Error loading students:", err);
+    }
+  };
+
+  // Helper functions
+  const getClassName = (classId) => {
+    const cls = classes.find((c) => c._id === classId);
+    return cls?.sclassName || "Unknown";
+  };
+
+  const getTeacherName = (teacherId) => {
+    const teacher = teachers.find((t) => t._id === teacherId);
+    return teacher?.name || "Unknown";
+  };
+
+  const getStudentCountForClass = (classId) => {
+    return students.filter(
+      (student) => student.sclassName === classId
+    ).length;
+  };
+
+  // ========== Render ==========
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
-  // State and handler for tab changes
-  const [value, setValue] = useState("1");
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  // State and handler for section changes (attendance/marks)
-  const [selectedSection, setSelectedSection] = useState("attendance");
-  const handleSectionChange = (event, newSection) => {
-    setSelectedSection(newSection);
-  };
-
-  const studentColumns = [
-    { id: "rollNum", label: "Roll No.", minWidth: 100 },
-    { id: "name", label: "Name", minWidth: 170 },
-  ];
-
-  // Map the students data to the table rows format
-  const studentRows = sclassStudents.map((student) => {
-    return {
-      rollNum: student.rollNum,
-      name: student.name,
-      id: student._id,
-    };
-  });
-
-  // Define a component for the button in each row of the table for attendance
-  const StudentsAttendanceButtonHaver = ({ row }) => {
+  if (!subject) {
     return (
-      // Render the buttons for each row
-      <>
-        <BlueButton
-          variant="contained"
-          onClick={() => navigate("/Admin/students/student/" + row.id)}
-        >
-          View
-        </BlueButton>
-        <PurpleButton
-          variant="contained"
-          onClick={() =>
-            navigate(`/Admin/subject/student/attendance/${row.id}/${subjectID}`)
-          }
-        >
-          Take Attendance
-        </PurpleButton>
-      </>
+      <Container sx={{ py: 4 }}>
+        <Alert severity="error">Subject not found</Alert>
+        <Button onClick={() => navigate(-1)} sx={{ mt: 2 }}>
+          Go Back
+        </Button>
+      </Container>
     );
-  };
+  }
 
-  // Define a component for the button in each row of the table for marks
-  const StudentsMarksButtonHaver = ({ row }) => {
-    return (
-      // Render the buttons for each row
-      <>
-        <BlueButton
-          variant="contained"
-          onClick={() => navigate("/Admin/students/student/" + row.id)}
-        >
-          View
-        </BlueButton>
-        <PurpleButton
-          variant="contained"
-          onClick={() =>
-            navigate(`/Admin/subject/student/marks/${row.id}/${subjectID}`)
-          }
-        >
-          Provide Marks
-        </PurpleButton>
-      </>
-    );
-  };
-
-  // Component to display and manage subject students
-  const SubjectStudentsSection = () => {
-    return (
-      // Conditional rendering based on whether there are students
-      <>
-        {getresponse ? (
-          <>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginTop: "16px",
-              }}
-            >
-              {/* Button to add new students */}
-              <GreenButton
-                variant="contained"
-                onClick={() => navigate("/Admin/class/addstudents/" + classID)}
-              >
-                Add Students
-              </GreenButton>
-            </Box>
-          </>
-        ) : (
-          // Table to show the students
-          <>
-            <Typography variant="h5" gutterBottom>
-              Students List:
-            </Typography>
-            {/* Conditional rendering based on selected section */}
-            {selectedSection === "attendance" && (
-              <TableTemplate
-                buttonHaver={StudentsAttendanceButtonHaver}
-                columns={studentColumns}
-                rows={studentRows}
-              />
-            )}
-            {selectedSection === "marks" && (
-              <TableTemplate
-                buttonHaver={StudentsMarksButtonHaver}
-                columns={studentColumns}
-                rows={studentRows}
-              />
-            )}
-            {/* Bottom navigation for switching between attendance and marks */}
-            <Paper
-              sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
-              elevation={3}
-            >
-              <BottomNavigation
-                value={selectedSection}
-                onChange={handleSectionChange}
-                showLabels
-              >
-                <BottomNavigationAction
-                  label="Attendance"
-                  value="attendance"
-                  icon={
-                    selectedSection === "attendance" ? (
-                      <TableChartIcon />
-                    ) : (
-                      <TableChartOutlinedIcon />
-                    )
-                  }
-                />
-                <BottomNavigationAction
-                  label="Marks"
-                  value="marks"
-                  icon={
-                    selectedSection === "marks" ? (
-                      <InsertChartIcon />
-                    ) : (
-                      <InsertChartOutlinedIcon />
-                    )
-                  }
-                />
-              </BottomNavigation>
-            </Paper>
-          </>
-        )}
-      </>
-    );
-  };
-
-  // Component to display subject details
-  const SubjectDetailsSection = () => {
-    const numberOfStudents = sclassStudents.length;
-
-    return (
-      // Display subject details
-      <>
-        <Typography variant="h4" align="center" gutterBottom>
-          Subject Details
-        </Typography>
-        <Typography variant="h6" gutterBottom>
-          Subject Name : {subjectDetails && subjectDetails.subName}
-        </Typography>
-        <Typography variant="h6" gutterBottom>
-          Subject Code : {subjectDetails && subjectDetails.subCode}
-        </Typography>
-        <Typography variant="h6" gutterBottom>
-          Subject Sessions : {subjectDetails && subjectDetails.sessions}
-        </Typography>
-        <Typography variant="h6" gutterBottom>
-          Number of Students: {numberOfStudents}
-        </Typography>
-        <Typography variant="h6" gutterBottom>
-          Class Name :{" "}
-          {subjectDetails &&
-            subjectDetails.sclassName &&
-            subjectDetails.sclassName.sclassName}
-        </Typography>
-        {/* Conditional rendering based on whether there is a teacher */}
-        {subjectDetails && subjectDetails.teacher ? (
-          <Typography variant="h6" gutterBottom>
-            Teacher Name : {subjectDetails.teacher.name}
-          </Typography>
-        ) : (
-          <GreenButton
-            variant="contained"
-            onClick={() =>
-              navigate("/Admin/teachers/addteacher/" + subjectDetails._id)
-            }
-          >
-            Add Subject Teacher
-          </GreenButton>
-        )}
-      </>
-    );
-  };
-
-  // Main return statement for the component
   return (
-    <>
-      {/* Conditional rendering based on loading state */}
-      {subloading ? (
-        <div> Loading...</div>
-      ) : ( // Main container for the component
-        <>
-          <Box sx={{ width: "100%", typography: "body1" }}>
-            <TabContext value={value}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <TabList
-                  onChange={handleChange}
-                  sx={{
-                    position: "fixed",
-                    width: "100%",
-                    bgcolor: "background.paper",
-                    zIndex: 1,
-                  }}
-                >
-                  {/* Tab navigation */}
-                  <Tab label="Details" value="1" />
-                  <Tab label="Students" value="2" />
-                </TabList>
-              </Box>
-              <Container sx={{ marginTop: "3rem", marginBottom: "4rem" }}>
-                <TabPanel value="1">
-                  <SubjectDetailsSection />
-                </TabPanel>
-                <TabPanel value="2">
-                  <SubjectStudentsSection />
-                </TabPanel>
-              </Container>
-            </TabContext>
-          </Box>
-        </>
+    <Container sx={{ py: 4 }}>
+      {/* Header */}
+      <Box sx={{ display: "flex", alignItems: "center", mb: 4, gap: 2 }}>
+        <IconButton onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h4" fontWeight={700}>
+          📖 {subject.subName}
+        </Typography>
+      </Box>
+
+      {error && (
+        <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
+          {error}
+        </Alert>
       )}
-    </>
+
+      {/* Classes Section */}
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
+          🏫 Danh sách các lớp
+        </Typography>
+
+        {subject.classes && subject.classes.length > 0 ? (
+          <Box sx={{ overflowX: "auto" }}>
+            <Table>
+              <TableHead sx={{ backgroundColor: "#f1f5f9" }}>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>Tên lớp</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }} align="center">
+                    Số sinh viên
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>
+                    Tên giáo viên chủ nhiệm
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {subject.classes.map((classAssignment) => (
+                  <TableRow key={classAssignment.classId} hover>
+                    <TableCell>
+                      <Typography fontWeight={500}>
+                        {getClassName(classAssignment.classId)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography fontWeight={500}>
+                        {getStudentCountForClass(classAssignment.classId)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        {getTeacherName(classAssignment.teacherId)}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
+        ) : (
+          <Alert severity="info">Chưa có lớp nào được gán môn học này</Alert>
+        )}
+      </Paper>
+    </Container>
   );
 };
 
-// Export the component
 export default ViewSubject;

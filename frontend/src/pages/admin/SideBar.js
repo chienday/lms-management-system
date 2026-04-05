@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {
   Divider,
   ListItemButton,
@@ -8,6 +8,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
+import styled from "styled-components";
 
 import HomeIcon from "@mui/icons-material/Home";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -16,156 +17,107 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import AnnouncementOutlinedIcon from "@mui/icons-material/AnnouncementOutlined";
 import ClassOutlinedIcon from "@mui/icons-material/ClassOutlined";
 import SupervisorAccountOutlinedIcon from "@mui/icons-material/SupervisorAccountOutlined";
-import ReportIcon from "@mui/icons-material/Report";
+
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
+
+const StyledListItemButton = styled(ListItemButton)`
+  border-radius: 12px;
+  margin: 4px 12px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #eef2ff;
+  }
+
+  &.Mui-selected,
+  &.Mui-selected:hover {
+    background-color: #e0e7ff;
+  }
+`;
+
+const StyledListItemIcon = styled(ListItemIcon)`
+  color: ${({ active }) => (active ? "#2563eb" : "#64748b")};
+  min-width: 40px;
+`;
+
+const StyledListItemText = styled(ListItemText)`
+  & .MuiListItemText-primary {
+    font-weight: ${({ active }) => (active ? "600" : "500")};
+    color: ${({ active }) => (active ? "#1e3a8a" : "#334155")};
+    font-size: 0.9rem;
+  }
+`;
 
 const SideBar = () => {
-  // Get the current location from react-router-dom
   const location = useLocation();
+
+  const isActive = (path) => {
+    if (path === "/" && location.pathname === "/") return true;
+    if (path !== "/" && location.pathname.startsWith(path)) return true;
+    return false;
+  };
+
+  const menuItems = [
+    { path: "/", label: "Trang chủ", icon: <HomeIcon /> },
+    { path: "/Admin/classes", label: "Quản lý lớp học", icon: <ClassOutlinedIcon /> },
+    { path: "/Admin/subjects", label: "Quản lý môn học", icon: <AssignmentIcon /> },
+    { path: "/Admin/teachers", label: "Quản lý giảng viên", icon: <SupervisorAccountOutlinedIcon /> },
+    { path: "/Admin/teaching-assignments", label: "Phân công giảng dạy", icon: <PlaylistAddCheckIcon /> },
+    { path: "/Admin/students", label: "Quản lý sinh viên", icon: <PersonOutlineIcon /> },
+    { path: "/Admin/notices", label: "Quản lý thông báo", icon: <AnnouncementOutlinedIcon /> },
+  ];
+
+  const accountItems = [
+    { path: "/Admin/profile", label: "Hồ sơ", icon: <AccountCircleOutlinedIcon /> },
+    { path: "/logout", label: "Đăng xuất", icon: <ExitToAppIcon /> },
+  ];
+
   return (
     <>
       <React.Fragment>
-        {/* Home button */}
-        <ListItemButton component={Link} to="/">
-          <Tooltip title={"Home"}> {/* Tooltip for the Home button */}
-            <ListItemIcon>
-              <HomeIcon
-                color={
-                  location.pathname === ("/" || "/Admin/dashboard")
-                    ? "primary"
-                    : "inherit"
-                }
+        {menuItems.map((item) => (
+          <Tooltip title={item.label} placement="right" key={item.path}>
+            <StyledListItemButton
+              component={Link}
+              to={item.path}
+              selected={isActive(item.path)}
+            >
+              <StyledListItemIcon active={isActive(item.path)}>
+                {item.icon}
+              </StyledListItemIcon>
+              <StyledListItemText
+                primary={item.label}
+                active={isActive(item.path)}
               />
-            </ListItemIcon>
-          </Tooltip> {/* Display the tooltip */}
-          <ListItemText primary="Home" /> {/* Text for the Home button */}
-        {/* Classes button */}
-        </ListItemButton>
-        <ListItemButton component={Link} to="/Admin/classes">
-          <Tooltip title={"Classes"}>
-            <ListItemIcon>
-              <ClassOutlinedIcon
-                color={
-                  location.pathname.startsWith("/Admin/classes")
-                    ? "primary"
-                    : "inherit"
-                }
-              />
-            </ListItemIcon>
-          </Tooltip> {/* Display the tooltip */}
-          <ListItemText primary="Classes" /> {/* Text for the Classes button */}
-        {/* Subjects button */}
-        </ListItemButton>
-        <ListItemButton component={Link} to="/Admin/subjects">
-          <Tooltip title={"Subjects"}>
-            <ListItemIcon>
-              <AssignmentIcon
-                color={
-                  location.pathname.startsWith("/Admin/subjects")
-                    ? "primary"
-                    : "inherit"
-                }
-              />
-            </ListItemIcon>
-          </Tooltip> {/* Display the tooltip */}
-          <ListItemText primary="Subjects" /> {/* Text for the Subjects button */}
-        {/* Teachers button */}
-        </ListItemButton>
-        <ListItemButton component={Link} to="/Admin/teachers">
-          <Tooltip title={"Teachers"}>
-            <ListItemIcon>
-              <SupervisorAccountOutlinedIcon
-                color={
-                  location.pathname.startsWith("/Admin/teachers")
-                    ? "primary"
-                    : "inherit"
-                }
-              />
-            </ListItemIcon>
-          </Tooltip> {/* Display the tooltip */}
-          <ListItemText primary="Teachers" /> {/* Text for the Teachers button */}
-        {/* Students button */}
-        </ListItemButton>
-        <ListItemButton component={Link} to="/Admin/students">
-          <Tooltip title={"Students"}>
-            <ListItemIcon>
-              <PersonOutlineIcon
-                color={
-                  location.pathname.startsWith("/Admin/students")
-                    ? "primary"
-                    : "inherit"
-                }
-              />
-            </ListItemIcon>
-          </Tooltip> {/* Display the tooltip */}
-          <ListItemText primary="Students" /> {/* Text for the Students button */}
-        {/* Notices button */}
-        </ListItemButton>
-        <ListItemButton component={Link} to="/Admin/notices">
-          <Tooltip title={"Notice"}>
-            <ListItemIcon>
-              <AnnouncementOutlinedIcon
-                color={
-                  location.pathname.startsWith("/Admin/notices")
-                    ? "primary"
-                    : "inherit"
-                }
-              />
-            </ListItemIcon>
-          </Tooltip> {/* Display the tooltip */}
-          <ListItemText primary="Notices" /> {/* Text for the Notices button */}
-        {/* Complains button */}
-        </ListItemButton>
-        <ListItemButton component={Link} to="/Admin/complains">
-          <Tooltip title={"Complains"}>
-            <ListItemIcon>
-              <ReportIcon
-                color={
-                  location.pathname.startsWith("/Admin/complains")
-                    ? "primary"
-                    : "inherit"
-                }
-              />
-            </ListItemIcon>
-          </Tooltip> {/* Display the tooltip */}
-          <ListItemText primary="Complains" /> {/* Text for the Complains button */}
-        </ListItemButton>
+            </StyledListItemButton>
+          </Tooltip>
+        ))}
       </React.Fragment>
-      <Divider sx={{ my: 1 }} />
+
+      <Divider sx={{ my: 2, mx: 2 }} />
+
       <React.Fragment>
-        {/* User section */}
-        <ListSubheader component="div" inset>
-          User {/* User section header */}
+        <ListSubheader component="div" inset sx={{ fontWeight: 600, color: "#475569" }}>
+          Tài khoản
         </ListSubheader>
-        <ListItemButton component={Link} to="/Admin/profile">
-          <Tooltip title={"Profile"}>
-            <ListItemIcon>
-              <AccountCircleOutlinedIcon
-                color={
-                  location.pathname.startsWith("/Admin/profile")
-                    ? "primary"
-                    : "inherit"
-                }
+        {accountItems.map((item) => (
+          <Tooltip title={item.label} placement="right" key={item.path}>
+            <StyledListItemButton
+              component={Link}
+              to={item.path}
+              selected={isActive(item.path)}
+            >
+              <StyledListItemIcon active={isActive(item.path)}>
+                {item.icon}
+              </StyledListItemIcon>
+              <StyledListItemText
+                primary={item.label}
+                active={isActive(item.path)}
               />
-            </ListItemIcon>
-          </Tooltip> {/* Display the tooltip */}
-          <ListItemText primary="Profile" /> {/* Text for the Profile button */}
-        {/* Logout button */}
-        </ListItemButton>
-        <ListItemButton component={Link} to="/logout">
-          <Tooltip title={"Logout"}>
-            <ListItemIcon>
-              <ExitToAppIcon
-                color={
-                  location.pathname.startsWith("/logout")
-                    ? "primary"
-                    : "inherit"
-                }
-              />
-            </ListItemIcon>
-          </Tooltip> {/* Display the tooltip */}
-          <ListItemText primary="Logout" /> {/* Text for the Logout button */}
-        </ListItemButton>
+            </StyledListItemButton>
+          </Tooltip>
+        ))}
       </React.Fragment>
     </>
   );

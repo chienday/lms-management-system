@@ -36,10 +36,10 @@ const Logout = () => {
             <LogoutContainer>
                 {/* Display the user's name */}
                 <UserName>{currentUser.name}</UserName>
-                <LogoutMessage>Are you sure you want to log out?</LogoutMessage>
+                <LogoutMessage>Bạn có chắc muốn đăng xuất không?</LogoutMessage>
                 <ButtonContainer>
-                    <LogoutButtonLogout onClick={handleLogout}>Log Out</LogoutButtonLogout>
-                    <LogoutButtonCancel onClick={handleCancel}>Cancel</LogoutButtonCancel>
+                    <LogoutButtonLogout onClick={handleLogout}>Đăng xuất</LogoutButtonLogout>
+                    <LogoutButtonCancel onClick={handleCancel}>Hủy</LogoutButtonCancel>
                 </ButtonContainer>
             </LogoutContainer>
         </PageBackground>

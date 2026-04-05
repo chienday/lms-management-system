@@ -54,14 +54,61 @@ const subjectCreate = async (req, res) => {
  */
 const allSubjects = async (req, res) => {
     try {
-        let subjects = await Subject.find({ school: req.params.id })
-            .populate("sclassName", "sclassName")
+        // First, check if we need to support BOTH old and new schemas
+        // Try to find with new schema (populate classes)
+        let subjects = await Subject.find({ school: req.params.id });
+        
+        // Manually populate related data
+        subjects = await Subject.populate(subjects, {
+            path: "classes.classId",
+            select: "sclassName"
+        });
+        subjects = await Subject.populate(subjects, {
+            path: "classes.teacherId",
+            select: "name"
+        });
+        
         if (subjects.length > 0) {
-            res.send(subjects)
+            // Transform to old format for backward compatibility
+            const transformedSubjects = subjects.map(subject => {
+                // NEW SCHEMA: has classes array
+                if (subject.classes && subject.classes.length > 0) {
+                    return subject.classes.map(classAssignment => ({
+                        _id: subject._id,
+                        subName: subject.subName,
+                        sessions: subject.sessions,
+                        sclassName: {
+                            sclassName: classAssignment.classId?.sclassName || "N/A",
+                            _id: classAssignment.classId?._id || null
+                        }
+                    }));
+                }
+                // OLD SCHEMA: has sclassName field directly (fallback)
+                else if (subject.sclassName) {
+                    return {
+                        _id: subject._id,
+                        subName: subject.subName,
+                        sessions: subject.sessions,
+                        sclassName: subject.sclassName
+                    };
+                }
+                // Fallback if neither format matches
+                else {
+                    return {
+                        _id: subject._id,
+                        subName: subject.subName,
+                        sessions: subject.sessions,
+                        sclassName: { sclassName: "N/A", _id: null }
+                    };
+                }
+            }).flat();
+            
+            res.send(transformedSubjects);
         } else {
             res.send({ message: "No subjects found" });
         }
     } catch (err) {
+        console.error("Error fetching all subjects:", err);
         res.status(500).json(err);
     }
 };

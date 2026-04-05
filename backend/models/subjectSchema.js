@@ -6,35 +6,48 @@ const subjectSchema = new mongoose.Schema({
     subName: {
         type: String,
         required: true,
+        trim: true,
     },
     // Code of the subject, required field
     subCode: {
         type: String,
         required: true,
+        unique: true,
     },
-    // Number of sessions for the subject, required field
+    // Number of sessions for the subject
     sessions: {
         type: String,
-        required: true,
-    },
-    // Reference to the class the subject belongs to, required field
-    sclassName: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'sclass',
-        required: true,
     },
     // Reference to the school the subject belongs to
     school: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'admin'
+        ref: 'admin',
+        required: true,
     },
     
-     // Reference to the teacher who teaches the subject
-    
-    teacher: {
+    // Classes taught and their responsible teachers
+    // Structure: [{ classId, teacherId }]
+    classes: [{
+        classId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'sclass',
+            required: true,
+        },
+        teacherId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'teacher',
+            required: true,
+        },
+    }],
+
+    // List of all teachers teaching this subject (across all classes)
+    teachers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'teacher',
-    }
+    }],
 }, { timestamps: true });
+
+// Compound unique index: subject code per school
+subjectSchema.index({ subCode: 1, school: 1 }, { unique: true });
 
 module.exports = mongoose.model("subject", subjectSchema);

@@ -48,46 +48,46 @@ const ShowTeachers = () => {
 
   // Conditional rendering based on loading state
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Đang tải...</div>;
   } else if (response) {
     return (
       <Box
         sx={{ display: "flex", justifyContent: "center", marginTop: "16px" }}
-        // Button to add a new teacher
+      // Button to add a new teacher
       >
         <ButtonContainer>
           <GreenButton
-          variant="contained"
-          onClick={() => navigate("/Admin/teachers/chooseclass")}
-        >
-            Add Teacher
+            variant="contained"
+            onClick={() => navigate("/Admin/teachers/chooseclass")}
+          >
+            Thêm giáo viên
           </GreenButton>
         </ButtonContainer>
       </Box>
     );
-  } 
+  }
   // Log any errors to the console
   else if (error) {
     console.log(error);
   }
   // Function to handle teacher deletion
-  const deleteHandler = (deleteID, address) => { 
+  const deleteHandler = (deleteID, address) => {
     console.log(deleteID);
     console.log(address);
 
     dispatch(deleteUser(deleteID, address)).then(() => {
-        dispatch(getAllTeachers(currentUser._id));
+      dispatch(getAllTeachers(currentUser._id));
     });
   };
 
   // Define the columns for the teachers table
   const columns = [
-    { id: "name", label: "Name", minWidth: 170 },
-    { id: "teachSubject", label: "Subject", minWidth: 100 },
-    { id: "teachSclass", label: "Class", minWidth: 170 },
+    { id: "name", label: "Tên giáo viên", minWidth: 170 },
+    { id: "teachSubject", label: "Môn học", minWidth: 100 },
+    { id: "teachSclass", label: "Lớp", minWidth: 170 },
   ];
   // Map the teachers data to the table rows format
-  const rows = teachersList.map((teacher) => { 
+  const rows = teachersList.map((teacher) => {
     return {
       name: teacher.name,
       teachSubject: teacher.teachSubject?.subName || null,
@@ -101,12 +101,12 @@ const ShowTeachers = () => {
   const actions = [
     {
       icon: <PersonAddAlt1Icon color="primary" />,
-      name: "Add New Teacher",
+      name: "Thêm giáo viên",
       action: () => navigate("/Admin/teachers/chooseclass"),
     },
     {
       icon: <PersonRemoveIcon color="error" />,
-      name: "Delete All Teachers",
+      name: "Xóa tất cả giáo viên",
       action: () => deleteHandler(currentUser._id, "Teachers"),
     },
   ];
@@ -128,7 +128,7 @@ const ShowTeachers = () => {
                   {column.label}
                 </StyledTableCell>
               ))}
-              <StyledTableCell align="center">Actions</StyledTableCell>
+              <StyledTableCell align="center">Hành động</StyledTableCell>
             </StyledTableRow>
           </TableHead>
           {/* Table body */}
@@ -160,7 +160,7 @@ const ShowTeachers = () => {
                                   );
                                 }}
                               >
-                                Add Subject
+                                Thêm môn học
                               </Button>
                             )}
                           </StyledTableCell>
@@ -187,7 +187,7 @@ const ShowTeachers = () => {
                           navigate("/Admin/teachers/teacher/" + row.id)
                         }
                       >
-                        View
+                        Xem chi tiết
                       </BlueButton>
                     </StyledTableCell>
                   </StyledTableRow>

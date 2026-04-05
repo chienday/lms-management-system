@@ -5,6 +5,24 @@ import { underStudentControl } from '../redux/studentRelated/studentSlice';
 import MuiAlert from '@mui/material/Alert'; 
 import { Snackbar } from '@mui/material'; 
 
+// Helper function to safely convert message to string
+const getSafeMessage = (message) => {
+    if (typeof message === 'string') {
+        return message;
+    }
+    if (typeof message === 'object' && message !== null && message.message && typeof message.message === 'string') {
+        return message.message;
+    }
+    if (typeof message === 'object' && message !== null) {
+        try {
+            return JSON.stringify(message);
+        } catch (e) {
+            return 'Đã xảy ra lỗi';
+        }
+    }
+    return String(message) || 'Đã xảy ra lỗi';
+};
+
 // Popup component for displaying success or error messages
 const Popup = ({ message, setShowPopup, showPopup }) => {
     // Initialize dispatch function from react-redux
@@ -28,21 +46,23 @@ const Popup = ({ message, setShowPopup, showPopup }) => {
         dispatch(underStudentControl()); 
     };
 
+    const safeMessage = getSafeMessage(message);
+
     return (
         <>
            
             <Snackbar open={showPopup} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{ vertical, horizontal }} key={vertical + horizontal}>
                 {
                     // Check if the message is "Done Successfully" to determine the type of alert to display
-                    (message === "Done Successfully") ?
+                    (safeMessage === "Done Successfully") ?
                         // Display a success alert if the message is "Done Successfully"
                         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                            {message}
+                            {safeMessage}
                         </Alert>
                         :
                         // Display an error alert for any other message
                         <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                            {message}
+                            {safeMessage}
                         </Alert>
                 }
             </Snackbar>

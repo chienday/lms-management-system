@@ -62,14 +62,10 @@ const getSclassDetail = async (req, res) => {
 const getSclassStudents = async (req, res) => {
     try {
         let students = await Student.find({ sclassName: req.params.id })
-        if (students.length > 0) {
-            let modifiedStudents = students.map((student) => {
-                return { ...student._doc, password: undefined };
-            });
-            res.send(modifiedStudents);
-        } else {
-            res.send({ message: "No students found" });
-        }
+        let modifiedStudents = students.map((student) => {
+            return { ...student._doc, password: undefined };
+        });
+        res.send(modifiedStudents);
     } catch (err) {
         res.status(500).json(err);
     }
@@ -107,5 +103,45 @@ const deleteSclasses = async (req, res) => {
     }
 }
 
+// Update a specific class
+const sclassUpdate = async (req, res) => {
+    try {
+        const { sclassName } = req.body;
+        const classId = req.params.id;
 
-module.exports = { sclassCreate, sclassList, deleteSclass, deleteSclasses, getSclassDetail, getSclassStudents };
+        if (!sclassName) {
+            return res.status(400).send({ message: "Class name is required" });
+        }
+
+        // Check if class exists
+        let sclass = await Sclass.findById(classId);
+        if (!sclass) {
+            return res.status(404).send({ message: "Class not found" });
+        }
+
+        // Check for duplicate name in the same school
+        const existingClass = await Sclass.findOne({
+            sclassName: sclassName,
+            school: sclass.school,
+            _id: { $ne: classId } // Exclude current class from check
+        });
+
+        if (existingClass) {
+            return res.status(400).send({ message: "Class name already exists in this school" });
+        }
+
+        // Update the class
+        sclass = await Sclass.findByIdAndUpdate(
+            classId,
+            { sclassName },
+            { new: true }
+        );
+
+        res.send(sclass);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+}
+
+
+module.exports = { sclassCreate, sclassList, deleteSclass, deleteSclasses, getSclassDetail, getSclassStudents, sclassUpdate };

@@ -18,11 +18,11 @@ const SeeNotice = () => {
         // Check if the current user is an Admin
         if (currentRole === "Admin") {
             // Dispatch action to get all notices for the Admin
-            dispatch(getAllNotices(currentUser._id, "Notice"));
+            dispatch(getAllNotices(currentUser?._id, "Notice"));
         }
         else {
             // Dispatch action to get all notices for the school
-            dispatch(getAllNotices(currentUser.school._id, "Notice"));
+            dispatch(getAllNotices(currentUser?.school?._id, "Notice"));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);

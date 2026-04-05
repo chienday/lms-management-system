@@ -30,8 +30,8 @@ const TeacherClassDetails = () => {
     }
     // Define columns for the student table
     const studentColumns = [
-        { id: 'name', label: 'Name', minWidth: 170 },
-        { id: 'rollNum', label: 'Roll Number', minWidth: 100 },
+        { id: 'name', label: 'Họ tên', minWidth: 170 },
+        { id: 'rollNum', label: 'MSSV', minWidth: 100 },
     ]
     // Map student data to table rows
     const studentRows = sclassStudents.map((student) => {
@@ -46,7 +46,7 @@ const TeacherClassDetails = () => {
 
     const StudentsButtonHaver = ({ row }) => {
         // Define options for the split button
-        const options = ['Take Attendance', 'Provide Marks'];
+        const options = ['Điểm danh', 'Nhập điểm'];
 
         const [open, setOpen] = React.useState(false);
         const anchorRef = React.useRef(null);
@@ -64,11 +64,13 @@ const TeacherClassDetails = () => {
 
         // Function to handle navigation to the attendance page
         const handleAttendance = () => {
-            navigate(`/Teacher/class/student/attendance/${row.id}/${subjectID}`)
-        }
+            // Điều hướng theo đúng route được khai báo trong TeacherDashboard
+            navigate(`/class/student/attendance/${row.id}/${subjectID}`);
+        };
         // Function to handle navigation to the marks page
         const handleMarks = () => {
-            navigate(`/Teacher/class/student/marks/${row.id}/${subjectID}`)
+            // Điều hướng theo đúng route được khai báo trong TeacherDashboard
+            navigate(`/class/student/marks/${row.id}/${subjectID}`);
         };
         // Function to handle the click event of a menu item
         const handleMenuItemClick = (event, index) => {
@@ -93,10 +95,11 @@ const TeacherClassDetails = () => {
                     variant="contained"
                     onClick={() =>
                         // Navigate to the student view page
-                        navigate("/Teacher/class/student/" + row.id)
+                        // Điều hướng theo đúng route được khai báo trong TeacherDashboard
+                        navigate(`/class/student/${row.id}`)
                     }
                 >
-                    View
+                    Xem
                 </BlueButton>
                 <React.Fragment>
                     <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
@@ -162,24 +165,24 @@ const TeacherClassDetails = () => {
         <>
             {/* Display loading message while data is being fetched */}
             {loading ? (
-                <div>Loading...</div>
+                <div>Đang tải...</div>
             ) : (
                 <>
                     {/* Display class details */}
                     <Typography variant="h4" align="center" gutterBottom>
-                        Class Details
+                        Chi tiết lớp
                     </Typography>
                     {/* Check if there is a response from the server */}
                     {getresponse ? (
                         <>
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
-                                No Students Found
+                                Không có sinh viên
                             </Box>
                         </>
                     ) : (
                         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                             <Typography variant="h5" gutterBottom>
-                                Students List:
+                                Danh sách sinh viên:
                             </Typography>
                             {/* Check if sclassStudents is an array and has data */}
                             {Array.isArray(sclassStudents) && sclassStudents.length > 0 &&

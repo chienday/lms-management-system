@@ -40,7 +40,7 @@ const ChooseClass = ({ situation }) => {
 
     // Define the columns for the classes table
     const sclassColumns = [
-        { id: 'name', label: 'Class Name', minWidth: 170 },
+        { id: 'name', label: 'Tên lớp', minWidth: 170 },
     ]
 
     // Map the classes data to the table rows format
@@ -57,25 +57,25 @@ const ChooseClass = ({ situation }) => {
                 {/* Button to choose a class */}
                 <PurpleButton variant="contained"
                     onClick={() => navigateHandler(row.id)}>
-                    Choose
+                    Chọn
                 </PurpleButton>
             </>
         );
-    }; 
+    };
 
     // Render the component
     return (
         <>
             {/* Conditional rendering based on loading state */}
             {loading ?
-                <div>Loading...</div>
+                <div>Đang tải...</div>
                 :
                 // Conditional rendering based on whether there are classes
                 <>
                     {getresponse ?
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
                             <Button variant="contained" onClick={() => navigate("/Admin/addclass")}>
-                                Add Class
+                                Thêm lớp
                             </Button>
                         </Box>
                         // Table to show the classes
@@ -83,7 +83,7 @@ const ChooseClass = ({ situation }) => {
                         <>
                             {/* Title for the classes section */}
                             <Typography variant="h6" gutterBottom component="div">
-                                Choose a class
+                                Chọn lớp
                             </Typography>
                             {/* Conditional rendering based on whether there are classes */}
                             {Array.isArray(sclassesList) && sclassesList.length > 0 &&

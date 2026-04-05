@@ -3,6 +3,8 @@ services:
     image: mongo:6
     container_name: lms-tlu-mongodb
     restart: always
+    ports:
+      - "27017:27017"
     volumes:
       - mongodb_data:/data/db
     networks:
@@ -24,6 +26,8 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+      ai-service:
+        condition: service_healthy
     networks:
       - lms-tlu-network
 
@@ -33,8 +37,6 @@ services:
     restart: always
     ports:
       - "3000:80"
-    env_file:
-      - ./frontend/.env
     depends_on:
       - backend
     networks:
@@ -46,10 +48,15 @@ services:
     restart: always
     ports:
       - "8000:8000"
-    depends_on:
-      - backend
+    env_file:
+      - ./backend/.env
     networks:
       - lms-tlu-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mongodb_data:

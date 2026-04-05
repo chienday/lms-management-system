@@ -56,8 +56,8 @@ const userSlice = createSlice({
 
         authError: (state, action) => {
             state.status = 'error';
-            state.error = action.payload;
-            // Set the status to 'error' and store the error
+            state.error = action.payload?.message || action.payload?.toString() || "An error occurred";
+            // Set the status to 'error' and store the error safely
         },
 
         authLogout: (state) => {
@@ -98,8 +98,8 @@ const userSlice = createSlice({
 
         getError: (state, action) => {
             state.loading = false;
-            state.error = action.payload.message;
-            // Set loading to false and store the error message
+            state.error = action.payload?.message || action.payload?.toString() || "An error occurred";
+            // Set loading to false and store the error message safely
         },
 
         toggleDarkMode: (state) => {

@@ -39,23 +39,7 @@ const teacherSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'sclass',
         required: true,
-    },
-    // Array of attendance records for the teacher
-    attendance: [{
-        // Date of the attendance record, required field
-        date: {
-            type: Date,
-            required: true
-        },
-        // Number of present students
-      
-        presentCount: {
-            type: String,
-        },
-        absentCount: {
-            type: String,
-        }
-    }]
+    }
     // Add timestamps for when the teacher was created and updated
 }, { timestamps: true });
 

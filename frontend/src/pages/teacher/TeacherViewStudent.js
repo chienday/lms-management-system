@@ -33,15 +33,23 @@ const TeacherViewStudent = () => {
 
   const address = 'Student';
   const studentID = params.id;
-  const teachSubject = currentUser.teachSubject?.subName;
-  const teachSubjectID = currentUser.teachSubject?._id;
+  const teachSubject = currentUser?.teachSubject?.subName;
+  const teachSubjectID = currentUser?.teachSubject?._id;
 
+  // Debug logs
   useEffect(() => {
+    console.log("TeacherViewStudent mounted with studentID:", studentID);
+    console.log("currentUser:", currentUser);
     dispatch(getUserDetails(studentID, address));
   }, [dispatch, studentID]);
 
-  if (response) console.log(response);
-  if (error) console.log(error);
+  if (response) {
+    console.log("Response:", response);
+  }
+  if (error) {
+    console.error("Error:", error);
+    // Don't navigate away, show error message instead
+  }
 
   const [sclassName, setSclassName] = useState('');
   const [studentSchool, setStudentSchool] = useState('');
@@ -67,29 +75,65 @@ const TeacherViewStudent = () => {
   const overallAbsentPercentage = 100 - overallAttendancePercentage;
 
   const chartData = [
-    { name: 'Present', value: overallAttendancePercentage },
-    { name: 'Absent', value: overallAbsentPercentage },
+    { name: 'Có mặt', value: overallAttendancePercentage },
+    { name: 'Vắng', value: overallAbsentPercentage },
   ];
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Đang tải thông tin sinh viên...</div>;
+
+  if (error) {
+    return (
+      <Container maxWidth="lg">
+        <Box sx={{ mt: 4, p: 2, bgcolor: '#ffebee', borderRadius: 1 }}>
+          <Typography color="error" variant="h6">
+            Lỗi khi tải thông tin sinh viên: {error}
+          </Typography>
+          <Button 
+            variant="contained" 
+            sx={{ mt: 2 }}
+            onClick={() => navigate(-1)}
+          >
+            Quay lại
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
+
+  if (!userDetails) {
+    return (
+      <Container maxWidth="lg">
+        <Box sx={{ mt: 4, p: 2 }}>
+          <Typography>Không tìm thấy thông tin sinh viên</Typography>
+          <Button 
+            variant="contained"
+            sx={{ mt: 2 }}
+            onClick={() => navigate(-1)}
+          >
+            Quay lại
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4 }}>
         {/* STUDENT INFO */}
         <Typography variant="h5" gutterBottom>
-          Student Information
+          Thông tin sinh viên
         </Typography>
 
-        <Typography>Name: {userDetails?.name}</Typography>
-        <Typography>Roll Number: {userDetails?.rollNum}</Typography>
-        <Typography>Class: {sclassName?.sclassName}</Typography>
-        <Typography>School: {studentSchool?.schoolName}</Typography>
+        <Typography>Họ tên: {userDetails?.name}</Typography>
+        <Typography>MSSV: {userDetails?.rollNum}</Typography>
+        <Typography>Lớp: {sclassName?.sclassName}</Typography>
+        <Typography>Trường: {studentSchool?.schoolName}</Typography>
 
         {/* ATTENDANCE */}
         <Box sx={{ mt: 5 }}>
           <Typography variant="h5" gutterBottom>
-            Attendance
+            Điểm danh
           </Typography>
 
           {subjectAttendance?.length > 0 &&
@@ -105,12 +149,12 @@ const TeacherViewStudent = () => {
                 <Table key={index} sx={{ mb: 4 }}>
                   <TableHead>
                     <StyledTableRow>
-                      <StyledTableCell>Subject</StyledTableCell>
-                      <StyledTableCell>Present</StyledTableCell>
-                      <StyledTableCell>Total Sessions</StyledTableCell>
-                      <StyledTableCell>Attendance %</StyledTableCell>
+                      <StyledTableCell>Môn</StyledTableCell>
+                      <StyledTableCell>Có mặt</StyledTableCell>
+                      <StyledTableCell>Tổng buổi</StyledTableCell>
+                      <StyledTableCell>Tỷ lệ điểm danh</StyledTableCell>
                       <StyledTableCell align="center">
-                        Actions
+                        Thao tác
                       </StyledTableCell>
                     </StyledTableRow>
                   </TableHead>
@@ -131,7 +175,7 @@ const TeacherViewStudent = () => {
                           ) : (
                             <KeyboardArrowDown />
                           )}
-                          Details
+                          Chi tiết
                         </Button>
                       </StyledTableCell>
                     </StyledTableRow>
@@ -145,15 +189,15 @@ const TeacherViewStudent = () => {
                         >
                           <Box sx={{ m: 2 }}>
                             <Typography variant="h6">
-                              Attendance Details
+                              Chi tiết điểm danh
                             </Typography>
 
                             <Table size="small">
                               <TableHead>
                                 <StyledTableRow>
-                                  <StyledTableCell>Date</StyledTableCell>
+                                  <StyledTableCell>Ngày</StyledTableCell>
                                   <StyledTableCell align="right">
-                                    Status
+                                    Trạng thái
                                   </StyledTableCell>
                                 </StyledTableRow>
                               </TableHead>
@@ -188,7 +232,7 @@ const TeacherViewStudent = () => {
             })}
 
           <Typography sx={{ mt: 2 }}>
-            Overall Attendance: {overallAttendancePercentage.toFixed(2)}%
+            Chuyên cần tổng: {overallAttendancePercentage.toFixed(2)}%
           </Typography>
 
           <CustomPieChart data={chartData} />
@@ -199,18 +243,18 @@ const TeacherViewStudent = () => {
             variant="contained"
             onClick={() =>
               navigate(
-                `/Teacher/class/student/attendance/${studentID}/${teachSubjectID}`
+                `/class/student/attendance/${studentID}/${teachSubjectID}`
               )
             }
           >
-            Add Attendance
+            Điểm danh
           </Button>
         </Box>
 
         {/* MARKS */}
         <Box sx={{ mt: 6 }}>
           <Typography variant="h5" gutterBottom>
-            Subject Marks
+            Điểm môn
           </Typography>
 
           {subjectMarks?.length > 0 &&
@@ -221,8 +265,8 @@ const TeacherViewStudent = () => {
                 <Table key={index} sx={{ mb: 2 }}>
                   <TableHead>
                     <StyledTableRow>
-                      <StyledTableCell>Subject</StyledTableCell>
-                      <StyledTableCell>Marks</StyledTableCell>
+                      <StyledTableCell>Môn</StyledTableCell>
+                      <StyledTableCell>Điểm</StyledTableCell>
                     </StyledTableRow>
                   </TableHead>
                   <TableBody>
@@ -243,11 +287,11 @@ const TeacherViewStudent = () => {
             variant="contained"
             onClick={() =>
               navigate(
-                `/Teacher/class/student/marks/${studentID}/${teachSubjectID}`
+                `/class/student/marks/${studentID}/${teachSubjectID}`
               )
             }
           >
-            Add Marks
+            Nhập điểm
           </PurpleButton>
         </Box>
       </Box>
